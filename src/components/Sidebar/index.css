@@ -1,0 +1,132 @@
+.sidebar {
+  box-sizing: border-box;
+  transition: all var(--anim-2);
+  position: fixed;
+  height: 100%;
+  z-index: 10;
+  overflow: hidden;
+  padding: 4px 0;
+  background-color: var(--dark-blue);
+  box-shadow: 1px 0 5px rgba(0, 0, 0, 0.8);
+}
+
+.mb-sidebar {
+  /* transition: all var(--anim-1); */
+  position: fixed;
+  background-color: red;
+  width: 270px;
+  height: 100%;
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0 12px;
+}
+
+.sidebar-body {
+  /* transition: sidebar-content var(--anim-1); */
+}
+
+.sidebar-body-list-item span {
+  /* animation: logo-animation var(--anim-8); */
+  opacity: 0;
+}
+
+.sidebar-header {
+  display: flex;
+  padding-bottom: 40px;
+  justify-content: center;
+}
+
+.sidebar-logo {
+  display: flex;
+  width: 220px;
+  height: 70px;
+  align-self: center;
+  /* animation: logo-animation 100ms; */
+}
+
+.sidebar-logo-no-txt {
+  width: 50px;
+  height: 50px;
+  /* animation: logo-animation 500ms; */
+}
+
+@keyframes logo-animation {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes sidebar-content {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.sidebar-body {
+}
+
+.sidebar-footer {
+  position: fixed;
+  white-space: nowrap;
+  text-align: center;
+  bottom: 20px;
+  font-size: 10px;
+  color: var(--text-blue);
+}
+
+/* .sidebar-content {
+  white-space: nowrap;
+} */
+
+.sidebar-body-list {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.sidebar-body-list-item {
+  display: flex;
+  text-decoration: none;
+  align-items: center;
+  justify-content: center;
+  transition: all 200ms;
+  padding: 12px 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.sidebar-body-list-item:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-body-list-item-icon {
+  flex: 30%;
+  color: var(--text-blue);
+}
+
+.sidebar-body-list-item div {
+  justify-content: center;
+}
+
+.sidebar-body-list-item span {
+  flex: 70%;
+  font-size: 14px;
+  color: var(--text-blue);
+}
+
+/* .sidebar-body-list-item a {
+  margin-left: 30px;
+} */

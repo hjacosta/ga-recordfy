@@ -1,0 +1,40 @@
+:root {
+  --main-bg-color: #fdfbfb;
+  --dark-blue: #394867;
+  --dark-blue-bg: #495b81;
+  --text-down-grey: #3b5867;
+  --text-blue: #99a6c1;
+  --link-blue: #2196f3;
+  --light-white: #ffffff;
+  --light-grey: #fafafa;
+  --shadow-grey: #bdbdbd;
+  --error-red: #bd6f69;
+  --error-bg-red: #fbecec;
+
+  /*Transitions*/
+  --anim-1: 100ms;
+  --anim-2: 200ms;
+  --anim-3: 300ms;
+  --anim-4: 400ms;
+  --anim-5: 500ms;
+  --anim-6: 600ms;
+  --anim-7: 700ms;
+  --anim-8: 800ms;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-size: 69.5%;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+/*
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+} */
