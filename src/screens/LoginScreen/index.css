@@ -27,7 +27,7 @@
   display: flex;
   width: 280px;
   align-self: center;
-  margin-bottom: 80px;
+  margin-bottom: 20px;
 }
 
 .logo-no-txt {
@@ -65,6 +65,11 @@
 .form-input:focus {
   outline: none;
   box-shadow: 0 0 3px var(--link-blue);
+}
+
+.required::after {
+  content: " *";
+  color: red;
 }
 
 .error-msg {

@@ -3,10 +3,16 @@ import "./index.css";
 import logo from "../../assets/images/b-logo.png";
 import { LoadingModal } from "../../components/LoadingModal";
 import { useFormik } from "formik";
+import { NavLink } from "react-router-dom";
+import { AuthContext } from "../../contexts/AuthContext";
 import * as Yup from "yup";
+import { loginApi } from "../../api/auth";
 
 function LoginScreen() {
-  const [error, setError] = React.useState(false);
+  const [error, setError] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const { login } = React.useContext(AuthContext);
 
   const loginForm = useFormik({
     initialValues: {
@@ -18,23 +24,30 @@ function LoginScreen() {
       username: Yup.string().email("No es un usuario valido").required(""),
       password: Yup.string().required("Ingrese un contraseña"),
     }),
-    onSubmit: (values, { resetForm }) => {
-      console.log(values);
-
-      resetForm();
+    onSubmit: async (values, { resetForm }) => {
+      const { username, password } = values;
+      try {
+        setIsLoading(true);
+        const userData = await loginApi({ username, password });
+        console.log(userData);
+        login(userData.body);
+        resetForm();
+      } catch (error) {
+        setError(error.message);
+        // alert(error.message);
+      }
+      setIsLoading(false);
     },
   });
 
   return (
     <div className="login">
-      {error && <LoadingModal height="40" width="40" color="#c3c3c3" />}
+      {isLoading && <LoadingModal height="40" width="40" color="#c3c3c3" />}
       <div className="form-container">
         <img className="logo" src={logo} alt="logo" />
 
         <form className="login-form">
-          <label className="form-label" htmlFor="username">
-            Usuario
-          </label>
+          <label className="form-label">Usuario</label>
           <input
             className={
               error
@@ -51,9 +64,7 @@ function LoginScreen() {
           {loginForm.errors.username && (
             <span className="input-error-msg">{loginForm.errors.username}</span>
           )}
-          <label className="form-label" htmlFor="password">
-            Contraseña
-          </label>
+          <label className="form-label">Contraseña</label>
           <input
             className={
               error
@@ -74,7 +85,7 @@ function LoginScreen() {
               {loginForm.errors.password}
             </span>
           )}
-          {error && <span className="error-msg">Usuario inválido</span>}
+          {error && <span className="error-msg">{error}</span>}
           <input
             onClick={loginForm.handleSubmit}
             className={"btn login-btn"}
@@ -86,7 +97,7 @@ function LoginScreen() {
           <a href="#" style={{ color: "red" }}>
             No puedo acceder
           </a>{" "}
-          | <a href="#">Crear una cuenta</a>
+          | <NavLink to="/signup">Crear una cuenta</NavLink>
         </span>
         <div className="lan-list-container">
           <select className="lan-list">

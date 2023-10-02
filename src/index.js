@@ -4,13 +4,16 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { SidebarProvider } from "./contexts/SidebarCtx";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <SidebarProvider>
-      <App />
-    </SidebarProvider>
+    <AuthProvider>
+      <SidebarProvider>
+        <App />
+      </SidebarProvider>
+    </AuthProvider>
   </React.StrictMode>
 );
 

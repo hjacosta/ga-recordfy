@@ -50,7 +50,9 @@
 }
 
 .app-template {
+  min-height: 100vh;
   width: 100%;
+  box-sizing: border-box;
   transition: all var(--anim-2);
 }
 

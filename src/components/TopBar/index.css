@@ -11,6 +11,7 @@
   border-radius: 8px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   background-color: var(--light-white);
+  /* transition: var(--anim-1); */
 }
 
 .TopBar-container p {
@@ -27,7 +28,6 @@
   color: var(--light-white);
   font-size: 12px;
   cursor: pointer;
-  /* transition: var(--anim-1); */
 }
 
 .TopBar-container span:hover {

@@ -8,6 +8,7 @@ import {
   AiFillFileText,
   AiFillSetting,
 } from "react-icons/ai";
+import { LuLayoutDashboard } from "react-icons/lu";
 import logo from "../../assets/images/w-logo.png";
 import logoNoTxt from "../../assets/images/logo-no-txt.png";
 import { NavLink } from "react-router-dom";
@@ -16,29 +17,48 @@ function Sidebar() {
   const { isVisible, setIsVisible, sidebarWidth } =
     React.useContext(SidebarContext);
   const { width, height } = useResize();
+  const iconSize = 25;
 
-  const sidebarItems = [
+  const [sidebarItems, setSidebarItems] = React.useState([
     {
-      label: "Home",
-      icon: <AiFillHome size={28} />,
+      label: "Dashboard",
+      icon: <LuLayoutDashboard size={iconSize} />,
       link: "/",
+      active: true,
     },
     {
       label: "Expedientes",
-      icon: <AiFillFolder size={28} />,
+      icon: <AiFillFolder size={iconSize} />,
       link: "/records",
+      active: false,
     },
     {
       label: "Reportes",
-      icon: <AiFillFileText size={28} />,
+      icon: <AiFillFileText size={iconSize} />,
       link: "/reports",
+      active: false,
     },
     {
       label: "Configuración",
-      icon: <AiFillSetting size={28} />,
+      icon: <AiFillSetting size={iconSize} />,
       link: "/settings",
+      active: false,
     },
-  ];
+  ]);
+
+  const selectItem = (label) => {
+    console.log(label);
+    let options = [...sidebarItems];
+
+    options.forEach((sidebarItem) => {
+      if (sidebarItem.label === label) {
+        sidebarItem.active = true;
+      } else {
+        sidebarItem.active = false;
+      }
+    });
+    setSidebarItems(options);
+  };
 
   return (
     <div
@@ -58,10 +78,13 @@ function Sidebar() {
             {sidebarItems.map((sbItem, index) => (
               <SidebarItem
                 key={index}
+                item={sbItem}
+                active={sbItem.active}
                 label={sbItem.label}
                 icon={sbItem.icon}
                 link={sbItem.link}
                 isVisible={isVisible}
+                selectItem={selectItem}
               />
             ))}
           </ul>
@@ -87,7 +110,7 @@ function layoutCSS(scWidth, isVisible, sbWidth) {
   let styles = {};
 
   if (scWidth > 768) {
-    styles = { width: isVisible ? sbWidth : "70px" };
+    styles = { width: isVisible ? sbWidth : "60px" };
   } else {
     styles = {
       width: isVisible ? sbWidth : "0",
@@ -100,11 +123,20 @@ function layoutCSS(scWidth, isVisible, sbWidth) {
 
 function SidebarItem(props) {
   return (
-    <li>
-      <NavLink className="sidebar-body-list-item" to={props.link}>
+    <li className={`${props.active == true && "active"}`}>
+      <b></b>
+      <NavLink
+        onClick={(e) => {
+          props.selectItem(props.item.label);
+          console.log(props.item);
+        }}
+        className={`sidebar-body-list-item `}
+        to={props.link}
+      >
         <div className="sidebar-body-list-item-icon">{props.icon}</div>
         {props.isVisible && <span>{props.label}</span>}
       </NavLink>
+      <b></b>
     </li>
   );
 }

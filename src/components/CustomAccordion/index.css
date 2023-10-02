@@ -1,0 +1,30 @@
+.CustomAcordion-container {
+  /* padding: 10px 0; */
+}
+
+.CustomAcordion-section {
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2) !important;
+  border: none !important;
+  border-radius: 6px !important;
+  margin-bottom: 12px;
+  padding: 0 6px;
+}
+
+.CustomAcordion-section::before {
+  display: none !important;
+}
+
+.CustomAcordion-section::after {
+  content: "" !important;
+}
+
+.CustomAcordion-section-title {
+  color: var(--dark-blue);
+  font-weight: bold !important;
+}
+
+@media screen and (min-width: 768px) {
+  .CustomAcordion-container {
+    padding: 10px 20px;
+  }
+}

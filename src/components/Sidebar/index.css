@@ -1,13 +1,13 @@
 .sidebar {
   box-sizing: border-box;
-  transition: all var(--anim-2);
+  transition: all var(--anim-4);
   position: fixed;
   height: 100%;
   z-index: 10;
   overflow: hidden;
   padding: 4px 0;
   background-color: var(--dark-blue);
-  box-shadow: 1px 0 5px rgba(0, 0, 0, 0.8);
+  /* box-shadow: 1px 0 5px rgba(0, 0, 0, 0.8); */
 }
 
 .mb-sidebar {
@@ -22,7 +22,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 0 12px;
+  /* padding: 0 12px; */
 }
 
 .sidebar-body {
@@ -31,13 +31,14 @@
 
 .sidebar-body-list-item span {
   /* animation: logo-animation var(--anim-8); */
-  opacity: 0;
+  opacity: 1;
 }
 
 .sidebar-header {
   display: flex;
   padding-bottom: 40px;
   justify-content: center;
+  margin-bottom: 70px;
 }
 
 .sidebar-logo {
@@ -74,9 +75,6 @@
   }
 }
 
-.sidebar-body {
-}
-
 .sidebar-footer {
   position: fixed;
   white-space: nowrap;
@@ -103,18 +101,60 @@
   justify-content: center;
   transition: all 200ms;
   padding: 12px 12px;
-  border-radius: 8px;
+  border-radius: 0;
   margin-bottom: 10px;
   cursor: pointer;
+  color: var(--text-blue);
 }
 
-.sidebar-body-list-item:hover {
-  background-color: rgba(0, 0, 0, 0.2);
+.sidebar-body-list li.active b {
+  background-color: #fff;
+  height: 10px;
+  width: 20px;
+  position: absolute;
+  width: 100%;
+  margin-top: -10px;
+}
+
+/* .sidebar-body-list li.active b:last-child {
+  z-index: 3;
+  margin-top: -12px;
+} */
+
+.sidebar-body-list-item.active:before {
+  content: "";
+  position: absolute;
+  margin-top: -65px;
+  background-color: var(--dark-blue);
+  width: 100%;
+  height: 10px;
+  border-bottom-right-radius: 6px;
+}
+
+.sidebar-body-list-item.active:after {
+  content: "";
+  position: absolute;
+  margin-top: 65px;
+  background-color: var(--dark-blue);
+  width: 100%;
+  height: 10px;
+  border-top-right-radius: 6px;
+  z-index: 3;
+}
+
+.sidebar-body-list-item:hover:not(.active) {
+  /* background-color: rgba(0, 0, 0, 0.2); */
+  color: aliceblue;
 }
 
 .sidebar-body-list-item-icon {
   flex: 30%;
-  color: var(--text-blue);
+  /* color: var(--text-blue); */
+}
+
+.sidebar-body-list-item.active {
+  background-color: white;
+  color: #7b89a6;
 }
 
 .sidebar-body-list-item div {
@@ -124,7 +164,8 @@
 .sidebar-body-list-item span {
   flex: 70%;
   font-size: 14px;
-  color: var(--text-blue);
+  white-space: nowrap;
+  /* color: var(--text-blue); */
 }
 
 /* .sidebar-body-list-item a {

@@ -1,0 +1,46 @@
+.AccordionForm-content-container {
+  overflow: hidden;
+  height: 0;
+  transition: all 0.4s;
+}
+
+.AccordionForm-content-container--open {
+  transition: all 0.4s;
+  height: 420px;
+}
+
+@media screen and (min-width: 400px) {
+  .AccordionForm-content-container--open {
+    height: 370px;
+  }
+}
+
+@media screen and (min-width: 558px) {
+  .AccordionForm-content-container--open {
+    height: 250px;
+  }
+}
+
+@media screen and (min-width: 760px) {
+  .AccordionForm-content-container--open {
+    height: 190px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .AccordionForm-content-container--open {
+    height: 250px;
+  }
+}
+
+@media screen and (min-width: 830px) {
+  .AccordionForm-content-container--open {
+    height: 200px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .AccordionForm-content-container--open {
+    height: 200px;
+  }
+}

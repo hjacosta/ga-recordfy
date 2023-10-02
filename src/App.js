@@ -1,25 +1,48 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthContext } from "./contexts/AuthContext";
+import { SidebarContext } from "./contexts/SidebarCtx";
 import "./App.css";
 
+import { SignupScreen } from "./screens/SignupScreen";
 import { LoginScreen } from "./screens/LoginScreen";
 import { HomeScreen } from "./screens/HomeScreen";
 import { RecordScreen } from "./screens/RecordScreen";
 import { Sidebar } from "./components/Sidebar";
 import { TopNavbar } from "./components/TopNavbar";
-import { SidebarContext } from "./contexts/SidebarCtx";
 import { useResize } from "./hooks/useResize";
 import { TopBar } from "./components/TopBar";
+import { ConfigurationScreen } from "./screens/ConfigurationScreen";
 
 function App() {
-  const [token, setToken] = React.useState("j");
+  const { token } = React.useContext(AuthContext);
+
+  // const defaultToken = JSON.parse(sessionStorage.getItem("session"))?.token
+  // const [token, setToken] = React.useState(defaultToken || undefined);
   const { isVisible, setIsVisible, sidebarWidth } =
     React.useContext(SidebarContext);
 
   const { width } = useResize();
+  const [cssLayout, setCssLayout] = React.useState({});
+
+  React.useEffect(() => {
+    (() => {
+      console.log("hi");
+      setCssLayout(layoutCSS(width, isVisible, sidebarWidth));
+    })();
+  }, [width, isVisible]);
+
+  console.log(cssLayout);
 
   if (!token) {
-    return <LoginScreen />;
+    return (
+      <Router>
+        <Routes>
+          <Route path="*" element={<LoginScreen />} />
+          <Route path="/signup" element={<SignupScreen />} />
+        </Routes>
+      </Router>
+    );
   }
 
   return (
@@ -34,17 +57,13 @@ function App() {
           ></div>
         )}
         <Sidebar />
-        <div
-          style={layoutCSS(width, isVisible, sidebarWidth)}
-          className="app-template"
-        >
+        <div style={cssLayout} className="app-template">
           <TopNavbar />
           <div className="main">
             <Routes>
               <Route path="/" element={<HomeScreen />} />
-            </Routes>
-            <Routes>
               <Route path="/records" element={<RecordScreen />} />
+              <Route path="/settings" element={<ConfigurationScreen />} />
             </Routes>
           </div>
         </div>
@@ -73,7 +92,10 @@ function layoutCSS(scWidth, isVisible, sbWidth) {
   let styles = {};
 
   if (scWidth > 768) {
-    styles = { marginLeft: isVisible ? sbWidth : "70px" };
+    styles = {
+      marginLeft: isVisible ? sbWidth : "60px",
+      width: `calc(100% - ${isVisible ? sbWidth : "60px"})`,
+    };
   } else {
     styles = { marginLeft: "0" };
   }
