@@ -11,6 +11,7 @@ import { CustomerCrud } from "../CustomerCrud";
 import { CustomerTypeCrud } from "../CustomerTypeCrud";
 import "./index.css";
 import { TopBar } from "../TopBar";
+import { FileTypeCrud } from "../FileTypeCrud";
 
 function CustomAcordion() {
   return (
@@ -53,12 +54,24 @@ function CustomAcordion() {
           id="panel1a-header"
         >
           <Typography className="CustomAcordion-section-title ">
-            Archivos por tipos de cliente
+            Tipos de archivos
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <CustomerTypeCrud />
+          <FileTypeCrud />
         </AccordionDetails>
+      </Accordion>
+      <Accordion className="CustomAcordion-section">
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          <Typography className="CustomAcordion-section-title ">
+            Archivos por tipos de cliente
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails></AccordionDetails>
       </Accordion>
     </div>
   );
