@@ -30,6 +30,7 @@ function SearchBar({
   searchTimeOut,
   addButton,
   addFormVisible,
+  customClass,
   searchButton,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -43,8 +44,6 @@ function SearchBar({
       Object.entries(values).map((value) => {
         data[value[0]] = value[1];
       });
-
-      console.log(searchForm.initialValues);
 
       setSearchParams(data);
       // resetForm();
@@ -74,7 +73,7 @@ function SearchBar({
   };
 
   return (
-    <div className="search-bar">
+    <div className={`search-bar ${customClass || ""}`}>
       <div className="search-bar-group first-group">
         <label>¿Qué estás buscando?</label>
         <input
@@ -188,24 +187,25 @@ function SearchBar({
           </ul>
         </Popover>
       </div>
-      <div className="search-bar-group">
-        <button
-          style={{
-            backgroundColor: addFormVisible && "#bd443b",
-            color: addFormVisible && "#fff",
-          }}
-          className="search-bar-input"
-          onClick={() => {
-            addButton.onClick();
-          }}
-        >
-          {" "}
-          {!addFormVisible ? addButton?.label || "Add" : "Cerrar"}{" "}
-          {/* {!addFormVisible && (
+      {addButton ? (
+        <div className="search-bar-group">
+          <button
+            style={{
+              backgroundColor: addFormVisible && "#bd443b",
+              color: addFormVisible && "#fff",
+            }}
+            className="search-bar-input"
+            onClick={() => {
+              addButton.onClick();
+            }}
+          >
+            {!addFormVisible ? addButton?.label || "Add" : "Cerrar"}{" "}
+            {/* {!addFormVisible && (
             <AiOutlinePlus style={{ float: "right", marginTop: 2 }} size={15} />
           )} */}
-        </button>
-      </div>
+          </button>
+        </div>
+      ) : undefined}
     </div>
   );
 }

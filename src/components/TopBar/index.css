@@ -6,11 +6,11 @@
   justify-content: space-between;
   align-items: center;
   /* box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); */
-  padding: 20px 30px;
+  padding: 20px;
   font-weight: bold;
   border-radius: 8px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: var(--light-white);
+  background-color: var(--main-bg-color);
   /* transition: var(--anim-1); */
 }
 
@@ -24,14 +24,16 @@
 .TopBar-container span {
   background-color: var(--dark-blue);
   padding: 6px 10px;
+  border: 1px solid var(--dark-blue);
   border-radius: 4px;
   color: var(--light-white);
+  font-weight: 500;
   font-size: 12px;
   cursor: pointer;
+  transition: all var(--anim-3);
 }
 
 .TopBar-container span:hover {
   background-color: var(--light-white);
-  border: 1px solid var(--dark-blue);
   color: var(--dark-blue);
 }

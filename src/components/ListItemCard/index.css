@@ -1,0 +1,76 @@
+.ListItemCard {
+  flex: 1;
+  /* flex-basis: 350px; */
+  margin: 8px;
+  max-width: 340px;
+  flex-direction: column;
+  box-sizing: border-box;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  padding: 16px 10px;
+  border-radius: 8px;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  color: var(--text-black);
+  background-color: var(--light-white);
+  cursor: pointer;
+  transition: all var(--anim-3);
+  /* -webkit-transform-style: preserve-3d; */
+  -webkit-backface-visibility: hidden;
+}
+
+.ListItemCard:hover {
+  /* flex: 2; */
+  transform: scale(1.05);
+  transition: all var(--anim-3) ease-in;
+  /* background-color: var(--dark-blue); */
+}
+
+.ListItemCard-header {
+  background-color: var(--light-sky-blue);
+  font-size: 18px;
+  padding: 12px 16px;
+  border-radius: 8px;
+}
+
+.ListItemCard-header p {
+  margin: 0;
+}
+
+.ListItemCard-header span {
+  display: block;
+  font-size: 12px;
+}
+
+.ListItemCard-detail {
+  margin-top: 16px;
+  padding: 0 12px;
+  color: var(--text-down-grey);
+  transition: all var(--anim-2);
+}
+
+.ListItemCard-detail ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ListItemCard-detail ul li {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.ListItemCard-detail ul li span:first-child {
+  display: block;
+  min-width: 90px;
+}
+
+.ListItemCard-detail ul li span:last-child {
+  font-weight: ;
+}
+
+@media screen and (min-width: 768px) {
+  .ListItemCard {
+  }
+}

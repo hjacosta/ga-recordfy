@@ -57,9 +57,10 @@
 }
 
 .main {
-  background-color: var(--light-white);
+  background-color: var(--main-bg-color);
   box-sizing: border-box;
   padding: 20px;
+  min-height: calc(100vh - 50px);
   /* padding: 20px; */
   /* padding: 20px; */
 }

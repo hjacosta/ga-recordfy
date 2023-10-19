@@ -5,14 +5,17 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { SidebarProvider } from "./contexts/SidebarCtx";
 import { AuthProvider } from "./contexts/AuthContext";
+import { RecordProvider } from "./contexts/RecordContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <AuthProvider>
-      <SidebarProvider>
-        <App />
-      </SidebarProvider>
+      <RecordProvider>
+        <SidebarProvider>
+          <App />
+        </SidebarProvider>
+      </RecordProvider>
     </AuthProvider>
   </React.StrictMode>
 );

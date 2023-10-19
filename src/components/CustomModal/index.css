@@ -1,0 +1,12 @@
+.CustomModal {
+  position: absolute;
+  max-width: 600px;
+  box-sizing: border-box;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+}

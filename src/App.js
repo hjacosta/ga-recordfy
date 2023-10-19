@@ -27,12 +27,9 @@ function App() {
 
   React.useEffect(() => {
     (() => {
-      console.log("hi");
       setCssLayout(layoutCSS(width, isVisible, sidebarWidth));
     })();
   }, [width, isVisible]);
-
-  console.log(cssLayout);
 
   if (!token) {
     return (
