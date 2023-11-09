@@ -53,7 +53,7 @@
   min-height: 100vh;
   width: 100%;
   box-sizing: border-box;
-  transition: all var(--anim-2);
+  transition: all var(--anim-4);
 }
 
 .main {

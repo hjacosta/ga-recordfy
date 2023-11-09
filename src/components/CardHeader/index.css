@@ -1,0 +1,15 @@
+.CardHeader {
+    background-color: var(--light-sky-blue);
+    font-size: 18px;
+    padding: 12px 16px;
+    border-radius: 8px;
+  }
+  
+  .CardHeader p {
+    margin: 0;
+  }
+  
+  .CardHeader span {
+    display: block;
+    font-size: 12px;
+  }

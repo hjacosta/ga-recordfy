@@ -12,6 +12,7 @@ import { CustomerTypeCrud } from "../CustomerTypeCrud";
 import "./index.css";
 import { TopBar } from "../TopBar";
 import { FileTypeCrud } from "../FileTypeCrud";
+import { SectionDivision } from "../SectionDivision";
 
 function CustomAcordion() {
   return (
@@ -75,19 +76,6 @@ function CustomAcordion() {
       </Accordion>
     </div>
   );
-}
-
-function SectionDivision({ title }) {
-  const styles = {
-    fontSize: 14,
-    color: "grey",
-    fontWeight: 500,
-    textTransform: "uppercase",
-    margin: "30px 0",
-    paddingLeft: 8,
-  };
-
-  return <p style={styles}>{title}</p>;
 }
 
 export { CustomAcordion };

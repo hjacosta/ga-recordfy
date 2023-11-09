@@ -50,12 +50,45 @@
   box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
 }
 
+.RecordForm-customers {
+  height: 120px;
+  overflow-y: scroll;
+  margin: 8px 0 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--dark-blue);
+  cursor: pointer
+}
+
+.RecordForm-customers li {
+  padding: 6px 12px
+}
+
+.RecordForm-customers li:hover{
+  background-color: #f6f2f2;
+}
+
+.RecordForm-search input:first-child {
+  height: 30px;
+  background-color: transparent;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  color: #757579;
+  cursor: pointer;
+  padding: 0 12px;
+  box-shadow: none;
+  font-weight: 600;
+}
+
 .RecordForm-search input {
   box-sizing: border-box;
   border-radius: 25px;
+  margin-top: 8px;
   height: 26px;
   width: 100%;
   padding-left: 20px;
+  /* box-shadow: 0 0 2px rgba(0, 0, 0, 0.4); */
 }
 
 .RecordForm-group button {

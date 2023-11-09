@@ -37,3 +37,16 @@
   background-color: var(--light-white);
   color: var(--dark-blue);
 }
+
+
+.TopBar-left {
+  display: flex;
+  align-items: center;
+  gap: 20px
+}
+
+.TopBar-left-icon {
+  font-size: 24px;
+  cursor: pointer;
+  
+}

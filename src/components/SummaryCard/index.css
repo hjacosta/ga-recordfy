@@ -1,0 +1,73 @@
+.SummaryCard {
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-end;
+    gap: 128px;
+    background-color: transparent;
+    padding:  40px 20px;
+    border-radius: 8px;
+    color: var( --text-black);
+    margin: 30px 50px 20px 50px;
+    font-size: 15px;
+    /* box-shadow: 0 0 12px 2px rgba(0, 0, 0, 0.4); */
+}
+
+
+.SummaryCard-content {
+
+    /* text-align: center; */
+}
+
+.SummaryCard-content h1 {
+    margin: 0 0 28px 0;
+    text-transform: uppercase;
+    font-weight: 400;
+    font-size: 20px;
+}
+
+
+.SummaryCard-content-item {
+    margin: 2px 0
+}
+
+.SummaryCard-content-item span:first-child{
+    display: inline-block;
+    width: 200px;
+
+    /* display: flex; */
+    /* justify-content:center; */
+    /* gap: 8px; */
+    /* color: var(--text-blue); */
+    
+}
+
+/* .SummaryCard-content-item span:last-child{
+    display: inline-block;
+    text-align: end;
+    width: 200px;
+} */
+
+/* .SummaryCard-img img {
+    width: 150px;
+    margin: 20px 0;
+    opacity: .7;
+} */
+
+
+.SummaryCard-img {
+   /* align-self: center; */
+}
+
+.SummaryCard-img ul{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.SummaryCard-img span{
+    display: inline-block;
+    width: 100px;
+}
