@@ -8,6 +8,7 @@ import { SignupScreen } from "./screens/SignupScreen";
 import { LoginScreen } from "./screens/LoginScreen";
 import { HomeScreen } from "./screens/HomeScreen";
 import { RecordScreen } from "./screens/RecordScreen";
+import { RecordDetailScreen } from "./screens/RecordDetailScreen";
 import { Sidebar } from "./components/Sidebar";
 import { TopNavbar } from "./components/TopNavbar";
 import { useResize } from "./hooks/useResize";
@@ -60,6 +61,7 @@ function App() {
             <Routes>
               <Route path="/" element={<HomeScreen />} />
               <Route path="/records" element={<RecordScreen />} />
+              <Route path="/records/:id" element={<RecordDetailScreen />} />
               <Route path="/settings" element={<ConfigurationScreen />} />
             </Routes>
           </div>

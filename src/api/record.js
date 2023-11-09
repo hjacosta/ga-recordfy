@@ -13,4 +13,18 @@ async function getRecordsApi(queryParams) {
   }
 }
 
-export { getRecordsApi };
+async function createRecordApi(data) {
+  try {
+    const records = await request({
+      method: "POST",
+      path: "/record",
+      data: data,
+    });
+
+    return records;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export { createRecordApi, getRecordsApi };

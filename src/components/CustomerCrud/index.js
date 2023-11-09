@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { AccordionForm } from "../AccordionForm";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import InputMask from "react-input-mask";
 
 function CustomerCrud() {
   const [customers, setCustomers] = React.useState([]);
@@ -24,12 +25,12 @@ function CustomerCrud() {
 
   const [searchParams, setSearchParams] = React.useState({});
   const [searchItems, setSearchItems] = React.useState([
-    {
-      label: "Apellido",
-      name: "lastName",
-      type: "text",
-      active: false,
-    },
+    // {
+    //   label: "Apellido",
+    //   name: "lastName",
+    //   type: "text",
+    //   active: false,
+    // },
     {
       label: "Cédula",
       name: "identificationNumber",
@@ -85,8 +86,11 @@ function CustomerCrud() {
       sortable: true,
     },
     {
-      name: "Creado",
-      selector: (row) => row.created_at,
+      name: "Creado en",
+      selector: (row) =>
+        row.created_at.split("T")[0] +
+        " " +
+        row.created_at.split("T")[1].split(".")[0],
       sortable: true,
     },
     {
@@ -95,26 +99,29 @@ function CustomerCrud() {
       sortable: true,
     },
     {
-      name: "Creado por",
-      selector: (row) => row.modified_at,
+      name: "Modificado en",
+      selector: (row) =>
+        row.modified_at.split("T")[0] +
+        " " +
+        row.modified_at.split("T")[1].split(".")[0],
       sortable: true,
     },
   ];
   const customersColumns = [
     {
-      name: "Nombre(s)",
-      selector: (row) => row.first_name,
+      name: "Nombre del clliente",
+      selector: (row) => row.customer_name,
       sortable: true,
       reorder: true,
     },
+    // {
+    //   name: "Apellido(s)",
+    //   selector: (row) => row.last_name,
+    //   sortable: true,
+    //   reorder: true,
+    // },
     {
-      name: "Apellido(s)",
-      selector: (row) => row.last_name,
-      sortable: true,
-      reorder: true,
-    },
-    {
-      name: "Cédula",
+      name: "No. de Identificación",
       selector: (row) => row.identification_number,
       sortable: true,
       reorder: true,
@@ -151,6 +158,7 @@ function CustomerCrud() {
             setToggleReq(!toggleReq);
           },
         }}
+        mainLabel="Nombre completo"
         searchItems={searchItems}
         setSearchItems={setSearchItems}
         setSearchParams={setSearchParams}
@@ -176,6 +184,10 @@ function CustomerCrud() {
   );
 }
 
+const CustomInput = (props) => (
+  <InputMask {...props}>{(inputProps) => <input {...inputProps} />}</InputMask>
+);
+
 function CustomerForm({ setIsLoading, setToggleReq, preDataUpdate }) {
   const { auth, logout } = React.useContext(AuthContext);
   const navigate = useNavigate();
@@ -184,15 +196,15 @@ function CustomerForm({ setIsLoading, setToggleReq, preDataUpdate }) {
   const form = useFormik({
     enableReinitialize: true,
     initialValues: {
-      firstName: "",
-      lastName: "",
+      customerName: "",
+      // lastName: "",
       identificationNumber: "",
       phoneNumber: "",
       customerTypeId: "",
     },
     validationSchema: Yup.object({
-      firstName: Yup.string().required("Campo requerido"),
-      lastName: Yup.string().required("Campo requerido"),
+      customerName: Yup.string().required("Campo requerido"),
+      // lastName: Yup.string().required("Campo requerido"),
       identificationNumber: Yup.string().required("Campo requerido"),
       phoneNumber: Yup.string().required("Campo requerido"),
       customerTypeId: Yup.string().required("Campo requerido"),
@@ -246,19 +258,20 @@ function CustomerForm({ setIsLoading, setToggleReq, preDataUpdate }) {
 
   let userFields = [
     {
-      label: "Nombre",
-      field: "firstName",
+      label: "Nombre del cliente",
+      field: "customerName",
       type: "input",
     },
+    // {
+    //   label: "Apellido",
+    //   field: "lastName",
+    //   type: "input",
+    // },
     {
-      label: "Apellido",
-      field: "lastName",
-      type: "input",
-    },
-    {
-      label: "Cédula",
+      label: "Número de Identificación",
       field: "identificationNumber",
       type: "input",
+      mask: "9999 9999 9999 9999",
     },
     {
       label: "Teléfono",
@@ -288,13 +301,14 @@ function CustomerForm({ setIsLoading, setToggleReq, preDataUpdate }) {
         Nuevo cliente
       </span>
       <div className="search-bar">
-        {userFields.map((item) => (
-          <div className="search-bar-group">
+        {userFields.map((item, index) => (
+          <div key={index} className="search-bar-group">
             <label>{item.label}</label>
             {item.type == "input" ? (
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <input
                   className="search-bar-input"
+                  type={"text"}
                   placeholder={item.label}
                   value={form.values[item.field]}
                   onChange={(e) =>
@@ -324,7 +338,12 @@ function CustomerForm({ setIsLoading, setToggleReq, preDataUpdate }) {
                 >
                   <option value="">Seleccione un tipo de cliente</option>
                   {customerTypes.map((opt) => (
-                    <option value={opt.customer_type_id}>{opt.name}</option>
+                    <option
+                      key={opt.customer_type_id}
+                      value={opt.customer_type_id}
+                    >
+                      {opt.name}
+                    </option>
                   ))}
                 </select>
                 <span

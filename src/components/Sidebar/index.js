@@ -7,7 +7,9 @@ import {
   AiFillFolder,
   AiFillFileText,
   AiFillSetting,
+  AiOutlinePartition,
 } from "react-icons/ai";
+import { RiMindMap } from "react-icons/ri";
 import { LuLayoutDashboard } from "react-icons/lu";
 import logo from "../../assets/images/w-logo.png";
 import logoNoTxt from "../../assets/images/logo-no-txt.png";
@@ -26,6 +28,12 @@ function Sidebar() {
       link: "/",
       active: true,
     },
+    // {
+    //   label: "Grupos",
+    //   icon: <AiOutlinePartition size={iconSize} />,
+    //   link: "/record-groups",
+    //   active: false,
+    // },
     {
       label: "Expedientes",
       icon: <AiFillFolder size={iconSize} />,

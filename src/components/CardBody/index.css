@@ -1,0 +1,28 @@
+.CardBody {
+    margin-top: 16px;
+    padding: 0 12px;
+    color: var(--text-down-grey);
+    transition: all var(--anim-2);
+  }
+  
+  .CardBody ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .CardBody ul li {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  
+  .CardBody ul li span:first-child {
+    display: block;
+    min-width: 90px;
+  }
+  
+  .CardBody ul li span:last-child {
+    font-weight: 400;
+  }

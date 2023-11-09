@@ -1,9 +1,16 @@
 import { serverURL } from "../utils/constants";
 
-async function request({ path, method, data, customParams }) {
+async function request({ path, method, data, customParams, isFormData }) {
   let options = {};
   if (!method) method = "GET";
   let token = JSON.parse(sessionStorage.getItem("session"))?.token;
+
+  let headers = {};
+  if (!isFormData) {
+    headers = {
+      "Content-Type": "application/json",
+    };
+  }
 
   try {
     switch (method) {
@@ -11,10 +18,10 @@ async function request({ path, method, data, customParams }) {
         options = {
           method,
           headers: {
-            "Content-Type": "application/json",
+            ...headers,
             Authorization: `${token}`,
           },
-          body: JSON.stringify(data),
+          body: !isFormData ? JSON.stringify(data) : data,
         };
 
         break;

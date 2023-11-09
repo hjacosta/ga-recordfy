@@ -13,6 +13,11 @@
   --error-red: #bd6f69;
   --error-bg-red: #fbecec;
 
+  /*Status Colors*/
+  --success: #45b26d;
+  --warning: #febf34;
+  --error: #da5353;
+
   /*Transitions*/
   --anim-1: 100ms;
   --anim-2: 200ms;

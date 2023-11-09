@@ -2,7 +2,7 @@
   flex: 1;
   /* flex-basis: 350px; */
   margin: 8px;
-  max-width: 340px;
+  max-width: 360px;
   flex-direction: column;
   box-sizing: border-box;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
@@ -30,6 +30,7 @@
   font-size: 18px;
   padding: 12px 16px;
   border-radius: 8px;
+  position: relative;
 }
 
 .ListItemCard-header p {
@@ -39,6 +40,15 @@
 .ListItemCard-header span {
   display: block;
   font-size: 12px;
+}
+
+.ListItemCard-header-status {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
 }
 
 .ListItemCard-detail {
@@ -67,7 +77,7 @@
 }
 
 .ListItemCard-detail ul li span:last-child {
-  font-weight: ;
+  font-weight: 400;
 }
 
 @media screen and (min-width: 768px) {

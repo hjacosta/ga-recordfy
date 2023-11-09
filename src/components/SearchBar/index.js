@@ -24,6 +24,7 @@ function getInitialValues(arr, mainFilter) {
 function SearchBar({
   searchItems,
   setSearchItems,
+  mainLabel,
   mainFilter,
   placeholder,
   setSearchParams,
@@ -75,7 +76,7 @@ function SearchBar({
   return (
     <div className={`search-bar ${customClass || ""}`}>
       <div className="search-bar-group first-group">
-        <label>¿Qué estás buscando?</label>
+        <label>{mainLabel || "¿Qué estás buscando?"}</label>
         <input
           className="search-bar-input"
           type="search"

@@ -39,6 +39,7 @@
   border: 1px solid #e0e0e0;
   background-color: transparent;
   border-radius: 4px;
+  cursor: pointer;
 }
 
 .search-bar-input:focus {
@@ -91,7 +92,7 @@
 .search-bar-filter-list-item span {
   display: inline-block;
   font-size: 14px;
-  width: 90px;
+  width: 120px;
 }
 
 .search-bar-group button:hover {
