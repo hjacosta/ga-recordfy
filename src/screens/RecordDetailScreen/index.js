@@ -98,11 +98,12 @@ function RecordDetailScreen() {
 
         const fileTypes = await getFileTypeApi({});
 
-        console.log("FILETYPES", recordFiles.body);
         if (fileTypes.error === true) {
           throw new Error(fileTypes.body);
         }
 
+        console.log("FILE TYPES: RecordDetailScreen 106", fileTypes);
+        console.log("RECORD FILES: RecordDetailScreen 107", recordFiles);
         setFileTypes(fileTypes.body);
 
         if (recordFiles.error === true) {
@@ -142,6 +143,7 @@ function RecordDetailScreen() {
           fileTypes={fileTypes}
           files={files}
           limit={fileLimitByUserType}
+          numberOfPartners={currentRecord.number_of_partners}
         />
 
         <div className="RecordDetail-uploader-container">
@@ -216,7 +218,7 @@ function RecordDetailScreen() {
                 </select>
               </div>
               <div style={{ flex: 1 }}>
-                <span>Representante</span>
+                <span>Socio</span>
                 <select
                   value={uploadForm.values.partner}
                   onChange={(e) => {
@@ -224,13 +226,13 @@ function RecordDetailScreen() {
                   }}
                 >
                   <option value="" disabled selected>
-                    Seleccione un representante
+                    Seleccione un socio
                   </option>
                   {Array(parseInt(currentRecord.number_of_partners))
                     .fill(1)
                     .map((opt, index) => (
                       <option key={index} value={`partner_${index + 1}`}>
-                        {`Representante ${index + 1}`}
+                        {`Socio ${index + 1}`}
                       </option>
                     ))}
                 </select>
@@ -267,7 +269,7 @@ function RecordDetailScreen() {
           .map((i, index) => (
             <>
               <SectionDivision
-                title={`Representante ${index + 1}`}
+                title={`Socio ${index + 1}`}
                 containerStyle={{ paddingLeft: 30 }}
               />
 

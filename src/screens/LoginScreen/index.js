@@ -44,7 +44,7 @@ function LoginScreen() {
     <div className="login">
       {isLoading && <LoadingModal height="40" width="40" color="#c3c3c3" />}
       <div className="form-container">
-        <img className="logo" src={logo} alt="logo" />
+        <img className="logo" width={20} src={logo} alt="logo" />
 
         <form className="login-form">
           <label className="form-label">Usuario</label>

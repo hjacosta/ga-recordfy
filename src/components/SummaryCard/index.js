@@ -3,16 +3,19 @@ import "./index.css";
 import { BsFillCheckCircleFill } from "react-icons/bs";
 import { PieChart } from "../PieChar";
 
-function SummaryCard({ data, files, fileTypes, limit }) {
+function SummaryCard({ data, files, fileTypes, limit, numberOfPartners }) {
   console.log("######################", data);
 
   let fileLimit =
     limit.filter((i) => i.name == data.customer_type)[0]?.limit || 4;
 
-  let completedPct = (parseInt(data?.file_amount) / parseInt(fileLimit)) * 100;
+  let completedPct =
+    (parseInt(data?.file_amount) /
+      parseInt(fileLimit * parseInt(numberOfPartners))) *
+    100;
   let borderColor = data?.file_amount != fileLimit ? "#3289cc" : "#fff";
 
-  const chartData = {
+  let chartData = {
     labels: [],
     datasets: [
       {
@@ -51,17 +54,25 @@ function SummaryCard({ data, files, fileTypes, limit }) {
         <div></div>
         <ul>
           {fileTypes.map((ft, index) => {
-            const isUploaded = files.filter((f) => f.file_type === ft.name);
+            const isUploaded = files.filter(
+              (f) => f.file_type === ft.name
+            ).length;
 
             console.log(isUploaded);
 
             return (
               <li key={index}>
                 <span>{ft.name}</span>
+                <span>
+                  {" "}
+                  {isUploaded}/{numberOfPartners}
+                </span>
                 <BsFillCheckCircleFill
                   size={12.5}
                   color={`${
-                    isUploaded.length > 0 ? "var(--success)" : "var(--error)"
+                    isUploaded >= numberOfPartners
+                      ? "var(--success)"
+                      : "var(--error)"
                   }`}
                 />
               </li>

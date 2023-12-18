@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthContext } from "./contexts/AuthContext";
 import { SidebarContext } from "./contexts/SidebarCtx";
 import "./App.css";
-
 import { SignupScreen } from "./screens/SignupScreen";
 import { LoginScreen } from "./screens/LoginScreen";
 import { HomeScreen } from "./screens/HomeScreen";
@@ -14,8 +13,22 @@ import { TopNavbar } from "./components/TopNavbar";
 import { useResize } from "./hooks/useResize";
 import { TopBar } from "./components/TopBar";
 import { ConfigurationScreen } from "./screens/ConfigurationScreen";
+import { NotificationContainer } from "react-notifications";
+import { ReportScreen } from "./screens/ReportScreen";
 
 function App() {
+  const socket = new WebSocket("ws://localhost:3002");
+
+  // Connection opened
+  socket.addEventListener("open", (event) => {
+    socket.send("Connection established");
+  });
+
+  // Listen for messages
+  socket.addEventListener("message", (event) => {
+    console.log("Message from server ", event.data);
+  });
+
   const { token } = React.useContext(AuthContext);
 
   // const defaultToken = JSON.parse(sessionStorage.getItem("session"))?.token
@@ -56,12 +69,14 @@ function App() {
         )}
         <Sidebar />
         <div style={cssLayout} className="app-template">
+          <NotificationContainer />
           <TopNavbar />
           <div className="main">
             <Routes>
               <Route path="/" element={<HomeScreen />} />
               <Route path="/records" element={<RecordScreen />} />
               <Route path="/records/:id" element={<RecordDetailScreen />} />
+              <Route path="/reports" element={<ReportScreen />} />
               <Route path="/settings" element={<ConfigurationScreen />} />
             </Routes>
           </div>

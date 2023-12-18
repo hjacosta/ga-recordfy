@@ -15,9 +15,12 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { NoDataFound } from "../../components/NoDataFound";
 import { Loader } from "../../components/Loader";
+import { createNotification } from "../../utils/notifications";
+import { NotificationManager } from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 function RecordScreen() {
-  const { auth } = React.useContext(AuthContext);
+  const { auth, logout } = React.useContext(AuthContext);
   const { records, setRecords, fileLimitByUserType } =
     React.useContext(RecordContext);
   // const [records, setRecords] = React.useState([]);
@@ -44,7 +47,7 @@ function RecordScreen() {
         .min(1, "Debe haber al menos un representante"),
     }),
     onSubmit: async (values, { resetForm }) => {
-      console.log(auth);
+      // console.log(auth);
 
       let data = {
         recordCode: values.recordCode,
@@ -64,7 +67,11 @@ function RecordScreen() {
         resetForm();
         setRequestToggle(!requestToggle);
       } catch (error) {
-        console.log(error.message);
+        console.log("HERE", error.message);
+
+        if (error.message.includes("already exists"))
+          NotificationManager.error("error", "Ya existe el expediente");
+
         if (
           error.message.includes("record_code") &&
           error.message.includes("unique")
@@ -78,9 +85,11 @@ function RecordScreen() {
     },
   });
 
+  console.log(searchParams);
+
   React.useEffect(() => {
     (async () => {
-      console.log("LARGE OF SEARCHPARAMS", Object.values(searchParams).length);
+      // console.log("LARGE OF SEARCHPARAMS", Object.values(searchParams).length);
 
       try {
         // setRecords([]);
@@ -89,7 +98,7 @@ function RecordScreen() {
 
         const customers = await getCustomersApi({});
         setIsLoading(false);
-        console.log("CUSTOMERS", customers);
+        // console.log("CUSTOMERS", customers);
 
         setCustomers(customers.body);
         if (records.error === true) {
@@ -103,6 +112,13 @@ function RecordScreen() {
 
         // recordForm.setFieldValue("recordCode", maxRecordCode + 1);
       } catch (error) {
+        if (error.message.includes("jwt expired")) {
+          NotificationManager.info("Tu sesión ha expirado");
+          setTimeout(() => {
+            logout();
+          }, 4000);
+        }
+
         if (error.message.includes("not found")) {
           setRecords([]);
           setIsLoading(false);
