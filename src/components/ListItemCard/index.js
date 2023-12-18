@@ -6,7 +6,7 @@ import "./index.css";
 function ListItemCard({ data, limit }) {
   const navigate = useNavigate();
 
-  console.log("#########", limit, data);
+  // console.log("#########", limit, data);
   let fileLimit =
     limit.filter((i) => i.name == data.customer_type)[0]?.limit || 4;
 
@@ -21,7 +21,10 @@ function ListItemCard({ data, limit }) {
         <div
           className="ListItemCard-header-status"
           style={getStatusColor(
-            setStatusFromFileNumber(data.file_amount, fileLimit)
+            setStatusFromFileNumber(
+              data.file_amount,
+              fileLimit * parseInt(data.number_of_partners)
+            )
           )} //fileLimit to be replace by data.file_limit
         ></div>
       </div>
@@ -38,7 +41,8 @@ function ListItemCard({ data, limit }) {
           <li>
             <span>Archivos</span>
             <span>
-              {data.file_amount} de {fileLimit}
+              {data.file_amount} de{" "}
+              {fileLimit * parseInt(data.number_of_partners)}
             </span>
           </li>
           <li>

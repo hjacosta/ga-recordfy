@@ -85,7 +85,7 @@ function TopNavbar() {
             horizontal: "right",
           }}
         >
-          <Typography
+          {/*<Typography
             className="topnav-actions-menu-item"
             onClick={() => {
               logout();
@@ -94,7 +94,7 @@ function TopNavbar() {
             sx={{ p: 2 }}
           >
             Logout
-          </Typography>
+          </Typography>*/}
           <Typography
             className="topnav-actions-menu-item"
             onClick={() => {
