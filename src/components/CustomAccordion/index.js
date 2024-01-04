@@ -40,7 +40,7 @@ function CustomAcordion() {
           id="panel1a-header"
         >
           <Typography className="CustomAcordion-section-title ">
-            Tipos de cliente
+            Tipos de clientes
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -69,7 +69,7 @@ function CustomAcordion() {
           id="panel1a-header"
         >
           <Typography className="CustomAcordion-section-title ">
-            Archivos por tipos de cliente
+            Archivos por tipos de socios
           </Typography>
         </AccordionSummary>
         <AccordionDetails></AccordionDetails>

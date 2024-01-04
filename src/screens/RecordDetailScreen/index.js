@@ -16,6 +16,7 @@ import * as Yup from "yup";
 import { getFileTypeApi } from "../../api/fileType";
 import { AuthContext } from "../../contexts/AuthContext";
 import { SectionDivision } from "../../components/SectionDivision";
+import { useParams, useLocation } from "react-router-dom";
 
 function RecordDetailScreen() {
   const [files, setFiles] = React.useState([]);
@@ -29,8 +30,17 @@ function RecordDetailScreen() {
     window.location.pathname.lastIndexOf("/") + 1
   );
 
-  const [currentRecord] = records.filter(
-    (record) => record.record_code === recordId
+  let { id: recordCode } = useParams();
+
+  const [currentRecord, setCurrentRecord] = React.useState(
+    ...records.filter((record) => record.record_code === recordCode)
+  );
+
+  console.log(
+    "AAAAAAAAAAA",
+    recordCode,
+    records,
+    records.filter((record) => record.record_code === recordCode)
   );
 
   const uploadForm = useFormik({
@@ -38,7 +48,7 @@ function RecordDetailScreen() {
       filename: "",
       prefix: "",
       fileExt: "",
-      fileTypeId: "",
+      fileTypeId: "all",
       expirationDate: "",
       file: "",
       partner: "",
@@ -82,18 +92,24 @@ function RecordDetailScreen() {
 
   React.useEffect(() => {
     (async () => {
+      console.log(window.location.pathname);
+
       try {
-        if (records.length == 0) {
-          // const records = await getRecordsApi();
-          // console.log("RECORDS", records);
-          // if (records.error === true) {
-          //   throw new Error(records.body);
-          // }
-          // setRecords(records.body);
-        }
+        // const searchedRecords = await getRecordsApi({});
+        // console.log("RECORDS", searchedRecords);
+        // if (searchedRecords.error === true) {
+        //   throw new Error(searchedRecords.body);
+        // }
+        // setRecords(searchedRecords.body);
+
+        // const [cRecord] = searchedRecords.filter(
+        //   (record) => record.record_code === recordCode
+        // );
+
+        // console.log("$$$$$$", cRecord);
 
         const recordFiles = await getRecordFilesApi({
-          recordId: currentRecord?.record_id,
+          recordId: currentRecord.record_id,
         });
 
         const fileTypes = await getFileTypeApi({});
@@ -102,7 +118,7 @@ function RecordDetailScreen() {
           throw new Error(fileTypes.body);
         }
 
-        console.log("FILE TYPES: RecordDetailScreen 106", fileTypes);
+        // console.log("FILE TYPES: RecordDetailScreen 106", fileTypes);
         console.log("RECORD FILES: RecordDetailScreen 107", recordFiles);
         setFileTypes(fileTypes.body);
 
@@ -117,7 +133,7 @@ function RecordDetailScreen() {
         }
       }
     })();
-  }, [reqToggle]);
+  }, [reqToggle, recordCode]);
 
   const selectFileType = (id) => {
     const target = fileTypes.filter((ft) => ft.file_type_id === id)[0];
@@ -128,7 +144,7 @@ function RecordDetailScreen() {
     uploadForm.setFieldValue("prefix", target.prefix);
   };
 
-  console.log("type", currentRecord);
+  console.log("type", recordId, records, currentRecord);
 
   return (
     <React.Fragment>
@@ -137,166 +153,168 @@ function RecordDetailScreen() {
         backTo={"/records"}
         // button={{ label: "Nuevo Expediente", onClick: () => console.log("hi") }}
       />
-      <Layout>
-        <SummaryCard
-          data={currentRecord}
-          fileTypes={fileTypes}
-          files={files}
-          limit={fileLimitByUserType}
-          numberOfPartners={currentRecord.number_of_partners}
-        />
+      {currentRecord && (
+        <Layout>
+          <SummaryCard
+            data={currentRecord}
+            fileTypes={fileTypes}
+            files={files}
+            limit={fileLimitByUserType}
+            numberOfPartners={currentRecord.number_of_partners}
+          />
 
-        <div className="RecordDetail-uploader-container">
-          {/* <label htmlFor="file">Selecciona un archivo</label> */}
+          <div className="RecordDetail-uploader-container">
+            {/* <label htmlFor="file">Selecciona un archivo</label> */}
 
-          <div
-            style={{ position: "relative" }}
-            className="RecordDetail-uploader-container-item "
-          >
-            <div className="RecordDetail-uploader-icon">
-              <BsFillCloudUploadFill size={60} color="grey" />
+            <div
+              style={{ position: "relative" }}
+              className="RecordDetail-uploader-container-item "
+            >
+              <div className="RecordDetail-uploader-icon">
+                <BsFillCloudUploadFill size={60} color="grey" />
 
-              <span style={{ fontSize: 13 }}>Arrastra tus archivos aquí</span>
-            </div>
-            <input
-              type="file"
-              onChange={(e) => {
-                console.log(e.target.files[0].type.split("/")[1]);
-                uploadForm.setFieldValue(
-                  "fileExt",
-                  e.target.files[0].type.split("/")[1]
-                );
-                uploadForm.setFieldValue(
-                  "filename",
-                  e.target.files[0].name.split(".")[0]
-                );
-
-                uploadForm.setFieldValue("file", e.target.files[0]);
-                // setLoadedFile(e.target.files[0]);
-              }}
-            />
-          </div>
-          <div className="RecordDetail-uploader-container-item ">
-            <span>Nombre del archivo</span>
-            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <span
-                style={{ fontSize: 14, marginLeft: 4, whiteSpace: "nowrap" }}
-              >
-                {uploadForm.values.prefix}-
-              </span>
-              <input
-                type="text"
-                placeholder="Nombre del archivo"
-                value={`${uploadForm.values.filename}`}
-                onChange={(e) =>
-                  uploadForm.setFieldValue("filename", `${e.target.value}`)
-                }
-                // disabled
-              />
-              <p className="RecordDetail-form-error">
-                {uploadForm.errors.filename}
-              </p>
-            </div>
-
-            <div style={{ display: "flex", width: "100%" }}>
-              <div style={{ flex: 1, marginRight: 8 }}>
-                <span>Tipo de archivo</span>
-                <select
-                  value={uploadForm.values.fileTypeId}
-                  onChange={(e) => {
-                    selectFileType(e.target.value);
-                  }}
-                >
-                  <option value="" disabled selected>
-                    Seleccione un tipo de archivo
-                  </option>
-                  {fileTypes.map((ft, index) => (
-                    <option key={index} value={ft.file_type_id}>
-                      {ft.name}
-                    </option>
-                  ))}
-                </select>
+                <span style={{ fontSize: 13 }}>Arrastra tus archivos aquí</span>
               </div>
-              <div style={{ flex: 1 }}>
-                <span>Socio</span>
-                <select
-                  value={uploadForm.values.partner}
-                  onChange={(e) => {
-                    uploadForm.setFieldValue("partner", e.target.value);
-                  }}
+              <input
+                type="file"
+                onChange={(e) => {
+                  console.log(e.target.files[0].type.split("/")[1]);
+                  uploadForm.setFieldValue(
+                    "fileExt",
+                    e.target.files[0].type.split("/")[1]
+                  );
+                  uploadForm.setFieldValue(
+                    "filename",
+                    e.target.files[0].name.split(".")[0]
+                  );
+
+                  uploadForm.setFieldValue("file", e.target.files[0]);
+                  // setLoadedFile(e.target.files[0]);
+                }}
+              />
+            </div>
+            <div className="RecordDetail-uploader-container-item ">
+              <span>Nombre del archivo</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <span
+                  style={{ fontSize: 14, marginLeft: 4, whiteSpace: "nowrap" }}
                 >
-                  <option value="" disabled selected>
-                    Seleccione un socio
-                  </option>
-                  {Array(parseInt(currentRecord.number_of_partners))
-                    .fill(1)
-                    .map((opt, index) => (
-                      <option key={index} value={`partner_${index + 1}`}>
-                        {`Socio ${index + 1}`}
+                  {uploadForm.values.prefix}-
+                </span>
+                <input
+                  type="text"
+                  placeholder="Nombre del archivo"
+                  value={`${uploadForm.values.filename}`}
+                  onChange={(e) =>
+                    uploadForm.setFieldValue("filename", `${e.target.value}`)
+                  }
+                  // disabled
+                />
+                <p className="RecordDetail-form-error">
+                  {uploadForm.errors.filename}
+                </p>
+              </div>
+
+              <div style={{ display: "flex", width: "100%" }}>
+                <div style={{ flex: 1, marginRight: 8 }}>
+                  <span>Tipo de archivo</span>
+                  <select
+                    value={uploadForm.values.fileTypeId}
+                    onChange={(e) => {
+                      selectFileType(e.target.value);
+                    }}
+                  >
+                    <option value="all" disabled>
+                      Seleccione un tipo de archivo
+                    </option>
+                    {fileTypes.map((ft, index) => (
+                      <option key={index} value={ft.file_type_id}>
+                        {ft.name}
                       </option>
                     ))}
-                </select>
+                  </select>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <span>Socio</span>
+                  <select
+                    value={uploadForm.values.partner}
+                    onChange={(e) => {
+                      uploadForm.setFieldValue("partner", e.target.value);
+                    }}
+                  >
+                    <option value="" disabled selected>
+                      Seleccione un socio
+                    </option>
+                    {Array(parseInt(currentRecord.number_of_partners))
+                      .fill(1)
+                      .map((opt, index) => (
+                        <option key={index} value={`partner_${index + 1}`}>
+                          {`Socio ${index + 1}`}
+                        </option>
+                      ))}
+                  </select>
+                </div>
               </div>
-            </div>
 
-            <p className="RecordDetail-form-error">
-              {uploadForm.errors.partner}
-            </p>
-            <span>Fecha de expiración</span>
-            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <input
-                type="date"
-                placeholder="Nombre del archivo"
-                value={`${uploadForm.values.expirationDate}`}
-                onChange={(e) =>
-                  uploadForm.setFieldValue(
-                    "expirationDate",
-                    `${e.target.value}`
-                  )
-                }
-                // disabled
-              />
               <p className="RecordDetail-form-error">
-                {uploadForm.errors.expirationDate}
+                {uploadForm.errors.partner}
               </p>
+              <span>Fecha de expiración</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <input
+                  type="date"
+                  placeholder="Nombre del archivo"
+                  value={`${uploadForm.values.expirationDate}`}
+                  onChange={(e) =>
+                    uploadForm.setFieldValue(
+                      "expirationDate",
+                      `${e.target.value}`
+                    )
+                  }
+                  // disabled
+                />
+                <p className="RecordDetail-form-error">
+                  {uploadForm.errors.expirationDate}
+                </p>
+              </div>
+              <button onClick={uploadForm.handleSubmit}>Subir archivo</button>
             </div>
-            <button onClick={uploadForm.handleSubmit}>Subir archivo</button>
           </div>
-        </div>
-        <SearchBar mainFilter={"name"} searchItems={[]} />
-        {Array(parseInt(currentRecord.number_of_partners))
-          .fill(1)
-          .map((i, index) => (
-            <>
-              <SectionDivision
-                title={`Socio ${index + 1}`}
-                containerStyle={{ paddingLeft: 30 }}
-              />
+          <SearchBar mainFilter={"name"} searchItems={[]} />
+          {Array(parseInt(currentRecord.number_of_partners))
+            .fill(1)
+            .map((i, index) => (
+              <>
+                <SectionDivision
+                  title={`Socio ${index + 1}`}
+                  containerStyle={{ paddingLeft: 30 }}
+                />
 
-              <ListWrapper>
-                {files?.filter((f) => f.partner === `partner_${index + 1}`)
-                  .length == 0 && (
-                  <NoDataFound label={"Aún no se ha cargado nigún archivo"} />
-                )}
-                {files
-                  ?.filter((f) => f.partner === `partner_${index + 1}`)
-                  ?.map((file, key) => (
-                    <FileCard
-                      key={key}
-                      data={file}
-                      handleRemove={() => {
-                        let choice = window.confirm(
-                          "Seguro que quieres eliminar este elemento?"
-                        );
+                <ListWrapper>
+                  {files?.filter((f) => f.partner === `partner_${index + 1}`)
+                    .length == 0 && (
+                    <NoDataFound label={"Aún no se ha cargado nigún archivo"} />
+                  )}
+                  {files
+                    ?.filter((f) => f.partner === `partner_${index + 1}`)
+                    ?.map((file, key) => (
+                      <FileCard
+                        key={key}
+                        data={file}
+                        handleRemove={() => {
+                          let choice = window.confirm(
+                            "Seguro que quieres eliminar este elemento?"
+                          );
 
-                        console.log(choice);
-                      }}
-                    />
-                  ))}
-              </ListWrapper>
-            </>
-          ))}
-      </Layout>
+                          console.log(choice);
+                        }}
+                      />
+                    ))}
+                </ListWrapper>
+              </>
+            ))}
+        </Layout>
+      )}
     </React.Fragment>
   );
 }

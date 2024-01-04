@@ -44,7 +44,8 @@ function RecordScreen() {
       customerId: Yup.string().required(),
       numberOfPartners: Yup.number()
         .required()
-        .min(1, "Debe haber al menos un representante"),
+        .min(1, "Debe haber al menos un socio en el expediente")
+        .max(5, "Solo se permiten 5 socios por expediente"),
     }),
     onSubmit: async (values, { resetForm }) => {
       // console.log(auth);

@@ -6,6 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import { SidebarProvider } from "./contexts/SidebarCtx";
 import { AuthProvider } from "./contexts/AuthContext";
 import { RecordProvider } from "./contexts/RecordContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -13,7 +14,9 @@ root.render(
     <AuthProvider>
       <RecordProvider>
         <SidebarProvider>
-          <App />
+          <NotificationProvider>
+            <App />
+          </NotificationProvider>
         </SidebarProvider>
       </RecordProvider>
     </AuthProvider>

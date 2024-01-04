@@ -1,0 +1,33 @@
+.Notification-list-wrapper {
+  width: 360px;
+  height: 500px;
+  cursor: pointer;
+  padding: 0 8px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+.Notification-list-wrapper:hover {
+  overflow-y: auto;
+}
+
+.Notification-list-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.Notification-list-wrapper::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+/* Handle */
+.Notification-list-wrapper::-webkit-scrollbar-thumb {
+  background: #e6dede;
+  border-radius: 10px;
+}
+
+.Notification-list-wrapper ul {
+  width: 100%;
+  list-style: none;
+  padding: 0;
+}

@@ -11,8 +11,10 @@ import { errorHandler } from "../../utils/errorhandler";
 import { useNavigate } from "react-router-dom";
 import { AccordionForm } from "../AccordionForm";
 import { useFormik } from "formik";
+import { InputMask } from "@react-input/mask";
+import { CustomModal } from "../CustomModal";
+import { countries } from "../../utils/preData";
 import * as Yup from "yup";
-import InputMask from "react-input-mask";
 
 function CustomerCrud() {
   const [customers, setCustomers] = React.useState([]);
@@ -87,10 +89,7 @@ function CustomerCrud() {
     },
     {
       name: "Creado en",
-      selector: (row) =>
-        row.created_at.split("T")[0] +
-        " " +
-        row.created_at.split("T")[1].split(".")[0],
+      selector: (row) => new Date(row.created_at).toLocaleString(),
       sortable: true,
     },
     {
@@ -100,16 +99,13 @@ function CustomerCrud() {
     },
     {
       name: "Modificado en",
-      selector: (row) =>
-        row.modified_at.split("T")[0] +
-        " " +
-        row.modified_at.split("T")[1].split(".")[0],
+      selector: (row) => new Date(row.created_at).toLocaleString(),
       sortable: true,
     },
   ];
   const customersColumns = [
     {
-      name: "Nombre del clliente",
+      name: "Nombre / Rezón Social",
       selector: (row) => row.customer_name,
       sortable: true,
       reorder: true,
@@ -134,7 +130,7 @@ function CustomerCrud() {
     },
     {
       name: "Tipo Cliente",
-      selector: (row) => row.customer_type_id,
+      selector: (row) => row.name,
       sortable: true,
       reorder: true,
     },
@@ -158,22 +154,19 @@ function CustomerCrud() {
             setToggleReq(!toggleReq);
           },
         }}
-        mainLabel="Nombre completo"
+        mainLabel="Nombre / Razón social"
         searchItems={searchItems}
         setSearchItems={setSearchItems}
         setSearchParams={setSearchParams}
         mainFilter="firstName"
         placeholder={"Buscar por nombre ..."}
       />
-      <AccordionForm
-        isVisible={formVisible}
-        form={
-          <CustomerForm
-            setIsLoading={setIsLoading}
-            setToggleReq={setToggleReq}
-            preDataUpdate={preDataUpdate}
-          />
-        }
+      <CustomerForm
+        isFormOpened={formVisible}
+        setIsFormOpened={setFormVisible}
+        setIsLoading={setIsLoading}
+        setToggleReq={setToggleReq}
+        preDataUpdate={preDataUpdate}
       />
       <CustomDatatable
         columns={customersColumns}
@@ -184,11 +177,13 @@ function CustomerCrud() {
   );
 }
 
-const CustomInput = (props) => (
-  <InputMask {...props}>{(inputProps) => <input {...inputProps} />}</InputMask>
-);
-
-function CustomerForm({ setIsLoading, setToggleReq, preDataUpdate }) {
+function CustomerForm({
+  setIsLoading,
+  setToggleReq,
+  preDataUpdate,
+  isFormOpened,
+  setIsFormOpened,
+}) {
   const { auth, logout } = React.useContext(AuthContext);
   const navigate = useNavigate();
   const [customerTypes, setCustomerTypes] = React.useState([]);
@@ -199,6 +194,9 @@ function CustomerForm({ setIsLoading, setToggleReq, preDataUpdate }) {
       customerName: "",
       // lastName: "",
       identificationNumber: "",
+      identificationType: "rnc",
+      nacionality: "Dominican Republic",
+      riskLevel: "Seleccione nivel de riesgo",
       phoneNumber: "",
       customerTypeId: "",
     },
@@ -231,7 +229,7 @@ function CustomerForm({ setIsLoading, setToggleReq, preDataUpdate }) {
         }
         console.log(error);
       }
-
+      setIsFormOpened(false);
       setIsLoading(false);
       console.log("hi");
       resetForm();
@@ -258,9 +256,28 @@ function CustomerForm({ setIsLoading, setToggleReq, preDataUpdate }) {
 
   let userFields = [
     {
-      label: "Nombre del cliente",
+      label: "Nombre / Razon Social",
       field: "customerName",
       type: "input",
+    },
+    {
+      label: "Tipo de identificación",
+      field: "identificationType",
+      type: "select",
+      options: [
+        {
+          value: "rnc",
+          label: "RNC",
+        },
+        {
+          value: "person_id",
+          label: "Cédula",
+        },
+        {
+          value: "passport",
+          label: "Pasaporte",
+        },
+      ],
     },
     // {
     //   label: "Apellido",
@@ -271,22 +288,102 @@ function CustomerForm({ setIsLoading, setToggleReq, preDataUpdate }) {
       label: "Número de Identificación",
       field: "identificationNumber",
       type: "input",
-      mask: "9999 9999 9999 9999",
+      props: {
+        mask: (() => {
+          let mask = "";
+          switch (form.values.identificationType) {
+            case "rnc":
+              mask = "___-_____-_";
+              break;
+            case "person_id":
+              mask = "___-_______-_";
+              break;
+            case "passport":
+              mask = "_________";
+              break;
+            default:
+              break;
+          }
+          return mask;
+        })(),
+        replacement: { _: /\d/ },
+      },
     },
     {
       label: "Teléfono",
       field: "phoneNumber",
       type: "input",
+      props: {
+        mask: "(___)-___-____",
+        replacement: { _: /\d/ },
+      },
     },
     {
       label: "Tipo de cliente",
       field: "customerTypeId",
       type: "select",
+      options: [
+        {
+          label: "Tipo de cliente",
+          value: "",
+        },
+        ...customerTypes.map((item) => {
+          return {
+            label: item.name,
+            value: item.customer_type_id,
+          };
+        }),
+      ],
     },
+    {
+      label: "Nivel de Riesgo",
+      field: "riskLevel",
+      type: "select",
+      options: [
+        {
+          label: "Seleccione nivel de riesgo",
+          value: "",
+        },
+        {
+          label: "Bajo",
+          value: "LOW",
+        },
+        {
+          label: "Medio",
+          value: "MEDIUM",
+        },
+        {
+          label: "Alto",
+          value: "HIGH",
+        },
+      ],
+    },
+    {
+      label: "Nacionalidad",
+      field: "nationality",
+      type: "select",
+      options: [
+        ...countries.sort((a, b) => {
+          if (a.firstname < b.firstname) {
+            return -1;
+          }
+          if (a.firstname > b.firstname) {
+            return 1;
+          }
+          return 0;
+        }),
+      ],
+    },
+    // {
+    //   label: "Tipo de cliente",
+    //   field: "customerTypeId",
+    //   type: "select",
+
+    // },
   ];
 
   return (
-    <>
+    <CustomModal open={isFormOpened} setOpen={setIsFormOpened}>
       <span
         style={{
           fontWeight: "500",
@@ -306,15 +403,25 @@ function CustomerForm({ setIsLoading, setToggleReq, preDataUpdate }) {
             <label>{item.label}</label>
             {item.type == "input" ? (
               <div style={{ display: "flex", flexDirection: "column" }}>
-                <input
-                  className="search-bar-input"
-                  type={"text"}
-                  placeholder={item.label}
-                  value={form.values[item.field]}
-                  onChange={(e) =>
-                    form.setFieldValue(item.field, e.target.value)
-                  }
-                />
+                {item.props && Object.entries(item.props).length > 0 ? (
+                  <InputMask
+                    {...item.props}
+                    className="search-bar-input"
+                    value={form.values[item.field]}
+                    onChange={(e) =>
+                      form.setFieldValue(item.field, e.target.value)
+                    }
+                  />
+                ) : (
+                  <input
+                    className="search-bar-input"
+                    value={form.values[item.field]}
+                    onChange={(e) =>
+                      form.setFieldValue(item.field, e.target.value)
+                    }
+                  />
+                )}
+
                 <span
                   style={{
                     position: "absolute",
@@ -331,18 +438,17 @@ function CustomerForm({ setIsLoading, setToggleReq, preDataUpdate }) {
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <select
                   value={form.values[item.field]}
-                  onChange={(e) =>
-                    form.setFieldValue(item.field, e.target.value)
-                  }
+                  onChange={(e) => {
+                    form.setFieldValue(item.field, e.target.value);
+                    if (item.field == "identificationType") {
+                      form.setFieldValue("identificationNumber", "");
+                    }
+                  }}
                   className="search-bar-input"
                 >
-                  <option value="">Seleccione un tipo de cliente</option>
-                  {customerTypes.map((opt) => (
-                    <option
-                      key={opt.customer_type_id}
-                      value={opt.customer_type_id}
-                    >
-                      {opt.name}
+                  {item.options.map((opt, idx) => (
+                    <option key={idx} value={opt.value}>
+                      {opt.label}
                     </option>
                   ))}
                 </select>
@@ -367,7 +473,7 @@ function CustomerForm({ setIsLoading, setToggleReq, preDataUpdate }) {
           </button>
         </div>
       </div>
-    </>
+    </CustomModal>
   );
 }
 

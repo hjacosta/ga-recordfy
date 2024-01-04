@@ -1,0 +1,58 @@
+.Notification-list-item * {
+  margin: 0;
+  font-size: 12px;
+}
+
+.Notification-list-item {
+  display: flex;
+  align-items: center;
+  /* margin: 8px 0; */
+  padding: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  gap: 12px;
+  animation: notify-entrance 600ms ease-in-out;
+}
+
+@keyframes notify-entrance {
+  0% {
+    opacity: 0;
+    margin-top: -12px;
+  }
+  100% {
+    opacity: 1;
+    margin-top: 0;
+  }
+}
+
+.Notification-list-item:hover {
+  background-color: #f5f0f0;
+}
+
+.Notification-list-item h5 {
+  font-weight: 500;
+}
+
+.Notification-list-item p {
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.Notification-list-item p:last-child {
+  text-overflow: ellipsis; /* enables ellipsis */
+  white-space: nowrap; /* keeps the text in a single line */
+  overflow: hidden; /* keeps the element from overflowing its parent */
+}
+
+.Notification-list-item-body {
+  width: 255px;
+  display: flex;
+  gap: 4px;
+  text-overflow: ellipsis;
+  color: #888888;
+}
+
+.Notification-list-item-icon .close:hover {
+  background-color: red;
+  color: red;
+}

@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { AccordionForm } from "../AccordionForm";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { InputMask } from "@react-input/mask";
 
 function FileTypeCrud() {
   const generalColumns = [
@@ -104,7 +105,7 @@ function FileTypeCrud() {
       <SearchBar
         addFormVisible={formVisible}
         addButton={{
-          label: "Añadir tipo cliente",
+          label: "Añadir tipo archivo",
           onClick: () => {
             setFormVisible(!formVisible);
           },
@@ -204,7 +205,7 @@ function FileTypeForm({ setIsLoading, setToggleReq }) {
           borderRadius: 4,
         }}
       >
-        Nuevo cliente
+        Nuevo tipo de archivo
       </span>
       <div className="search-bar">
         {userFields.map((item, index) => (

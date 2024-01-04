@@ -18,7 +18,7 @@ function CustomerTypeCrud() {
     },
     {
       name: "Creado",
-      selector: (row) => row.created_at,
+      selector: (row) => new Date(row.created_at).toLocaleString("es-ES"),
       reorder: true,
     },
     {

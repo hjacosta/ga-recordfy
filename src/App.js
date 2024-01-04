@@ -17,18 +17,6 @@ import { NotificationContainer } from "react-notifications";
 import { ReportScreen } from "./screens/ReportScreen";
 
 function App() {
-  const socket = new WebSocket("ws://localhost:3002");
-
-  // Connection opened
-  socket.addEventListener("open", (event) => {
-    socket.send("Connection established");
-  });
-
-  // Listen for messages
-  socket.addEventListener("message", (event) => {
-    console.log("Message from server ", event.data);
-  });
-
   const { token } = React.useContext(AuthContext);
 
   // const defaultToken = JSON.parse(sessionStorage.getItem("session"))?.token
