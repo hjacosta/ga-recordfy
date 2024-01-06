@@ -13,6 +13,7 @@ import "./index.css";
 import { TopBar } from "../TopBar";
 import { FileTypeCrud } from "../FileTypeCrud";
 import { SectionDivision } from "../SectionDivision";
+import { CustomerTypeFile } from "../CustomerTypeFile";
 
 function CustomAcordion() {
   return (
@@ -72,7 +73,9 @@ function CustomAcordion() {
             Archivos por tipos de socios
           </Typography>
         </AccordionSummary>
-        <AccordionDetails></AccordionDetails>
+        <AccordionDetails>
+          <CustomerTypeFile />
+        </AccordionDetails>
       </Accordion>
     </div>
   );

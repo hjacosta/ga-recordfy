@@ -8,8 +8,11 @@ import { useNavigate } from "react-router-dom";
 import { AccordionForm } from "../AccordionForm";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { FaArrowRight } from "react-icons/fa6";
+import { IoClose } from "react-icons/io5";
+import "./index.css";
 
-function CustomerTypeCrud() {
+function CustomerTypeFile() {
   const generalColumns = [
     {
       name: "Opciones",
@@ -76,144 +79,157 @@ function CustomerTypeCrud() {
 
   return (
     <>
-      <SearchBar
-        addFormVisible={formVisible}
-        addButton={{
-          label: "Añadir tipo cliente",
-          onClick: () => {
-            setFormVisible(!formVisible);
-          },
-        }}
-        searchButton={{
-          onClick: () => {
-            console.log("hi");
-            setToggleReq(!toggleReq);
-          },
-        }}
-        searchItems={searchItems}
-        setSearchItems={setSearchItems}
-        setSearchParams={setSearchParams}
-        mainFilter="name"
-        placeholder={"Buscar por descripción..."}
-      />
-      <AccordionForm
-        isVisible={formVisible}
-        form={
-          <CustomerTypeForm
-            setIsLoading={setIsLoading}
-            setToggleReq={setToggleReq}
-          />
-        }
-      />
-      <CustomDatatable
-        columns={customerTypeColumns}
-        data={customerType}
-        isLoading={isLoading}
-      />
-    </>
-  );
-}
-
-function CustomerTypeForm({ setIsLoading, setToggleReq }) {
-  const { auth, logout } = React.useContext(AuthContext);
-  const navigate = useNavigate();
-
-  const customerTypeForm = useFormik({
-    enableReinitialize: true,
-    initialValues: {
-      name: "",
-    },
-    validationSchema: Yup.object({
-      name: Yup.string().required("Campo requerido"),
-    }),
-    validateOnChange: false,
-    onSubmit: async (values, { resetForm }) => {
-      let data = {
-        ...values,
-        createdBy: auth.userProfile.email,
-        modifiedBy: auth.userProfile.email,
-      };
-
-      try {
-        setIsLoading(true);
-
-        await createCustomerTypeApi(data);
-        setToggleReq((state) => !state);
-        console.log(data);
-      } catch (error) {
-        if (error.message.includes("jwt")) {
-          logout();
-          navigate("/");
-        }
-        console.log(error);
-      }
-
-      setIsLoading(false);
-
-      resetForm();
-    },
-  });
-
-  let userFields = [
-    {
-      label: "Descripcion",
-      field: "name",
-      type: "input",
-    },
-  ];
-
-  return (
-    <>
-      <span
-        style={{
-          fontWeight: "500",
-          fontSize: 14,
-          padding: "4px 16px",
-          color: "var(--dark-blue)",
-          borderRadius: 4,
-        }}
-      >
-        Nuevo cliente
-      </span>
-      <div className="search-bar">
-        {userFields.map((item, index) => (
-          <div key={index} className="search-bar-group">
-            <label>{item.label}</label>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <input
-                className="search-bar-input"
-                placeholder={item.label}
-                value={customerTypeForm.values[item.field]}
-                onChange={(e) =>
-                  customerTypeForm.setFieldValue(item.field, e.target.value)
-                }
+      <div className="CustomerTypeFile-wrapper">
+        <div className="CustomerTypeFile-section left">
+          <ul>
+            <li>
+              <p>Cédula</p>
+              <FaArrowRight
+                title="Añadir"
+                size={14}
+                color=""
+                style={{ cursor: "pointer" }}
               />
-              <span
-                style={{
-                  position: "absolute",
-                  marginTop: 28,
-                  marginLeft: 4,
-                  fontSize: 10,
-                  color: "red",
-                }}
-              >
-                {customerTypeForm.errors[item.field]}
-              </span>
-            </div>
-          </div>
-        ))}
-        <div className="search-bar-group">
-          <button
-            type="button"
-            className="search-bar-input"
-            onClick={customerTypeForm.handleSubmit}
-          >
-            Guardar
-          </button>
+            </li>
+            <li>Cedula</li>
+            <li>Cedula</li>
+            <li>Cedula</li>
+            <li>Cedula</li>
+            <li>Cedula</li>
+            <li>Cedula</li>
+            <li>Cedula</li>
+            <li>Cedula</li>
+            <li>Cedula</li>
+            <li>Cedula</li>
+            <li>Cedula</li>
+          </ul>
         </div>
+        <div className="CustomerTypeFile-section right">
+          <select>
+            <option value="">Seleccione tipo de cliente</option>
+          </select>
+          <div className="CustomerTypeFile-section-list">
+            <ul>
+              <li>
+                <p>Cédula</p>
+                <IoClose
+                  title="Añadir"
+                  size={14}
+                  color=""
+                  style={{ cursor: "pointer" }}
+                />
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div className="CustomerTypeFile-footer">
+        <button>Guardar</button>
       </div>
     </>
   );
 }
 
-export { CustomerTypeCrud };
+// function CustomerTypeForm({ setIsLoading, setToggleReq }) {
+//   const { auth, logout } = React.useContext(AuthContext);
+//   const navigate = useNavigate();
+
+//   const customerTypeForm = useFormik({
+//     enableReinitialize: true,
+//     initialValues: {
+//       name: "",
+//     },
+//     validationSchema: Yup.object({
+//       name: Yup.string().required("Campo requerido"),
+//     }),
+//     validateOnChange: false,
+//     onSubmit: async (values, { resetForm }) => {
+//       let data = {
+//         ...values,
+//         createdBy: auth.userProfile.email,
+//         modifiedBy: auth.userProfile.email,
+//       };
+
+//       try {
+//         setIsLoading(true);
+
+//         await createCustomerTypeApi(data);
+//         setToggleReq((state) => !state);
+//         console.log(data);
+//       } catch (error) {
+//         if (error.message.includes("jwt")) {
+//           logout();
+//           navigate("/");
+//         }
+//         console.log(error);
+//       }
+
+//       setIsLoading(false);
+
+//       resetForm();
+//     },
+//   });
+
+//   let userFields = [
+//     {
+//       label: "Descripcion",
+//       field: "name",
+//       type: "input",
+//     },
+//   ];
+
+//   return (
+//     <>
+//       <span
+//         style={{
+//           fontWeight: "500",
+//           fontSize: 14,
+//           padding: "4px 16px",
+//           color: "var(--dark-blue)",
+//           borderRadius: 4,
+//         }}
+//       >
+//         Nuevo cliente
+//       </span>
+//       <div className="search-bar">
+//         {userFields.map((item, index) => (
+//           <div key={index} className="search-bar-group">
+//             <label>{item.label}</label>
+//             <div style={{ display: "flex", flexDirection: "column" }}>
+//               <input
+//                 className="search-bar-input"
+//                 placeholder={item.label}
+//                 value={customerTypeForm.values[item.field]}
+//                 onChange={(e) =>
+//                   customerTypeForm.setFieldValue(item.field, e.target.value)
+//                 }
+//               />
+//               <span
+//                 style={{
+//                   position: "absolute",
+//                   marginTop: 28,
+//                   marginLeft: 4,
+//                   fontSize: 10,
+//                   color: "red",
+//                 }}
+//               >
+//                 {customerTypeForm.errors[item.field]}
+//               </span>
+//             </div>
+//           </div>
+//         ))}
+//         <div className="search-bar-group">
+//           <button
+//             type="button"
+//             className="search-bar-input"
+//             onClick={customerTypeForm.handleSubmit}
+//           >
+//             Guardar
+//           </button>
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
+
+export { CustomerTypeFile };

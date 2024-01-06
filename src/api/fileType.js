@@ -27,4 +27,31 @@ async function createFileTypeApi(data) {
   }
 }
 
+async function getCustomerFileType({ queryParams }) {
+  try {
+    const fileType = await request({
+      path: "/file-type",
+      customParams: queryParams,
+    });
+
+    return fileType;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+async function createCustomerFileType(data) {
+  try {
+    const customers = await request({
+      path: "/file-type",
+      method: "POST",
+      data: data,
+    });
+
+    return customers;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 export { getFileTypeApi, createFileTypeApi };
