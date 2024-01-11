@@ -4,8 +4,6 @@ import { BsFillCheckCircleFill } from "react-icons/bs";
 import { PieChart } from "../PieChar";
 
 function SummaryCard({ data, files, fileTypes, limit, numberOfPartners }) {
-  console.log("######################", data);
-
   let fileLimit =
     limit.filter((i) => i.name == data.customer_type)[0]?.limit || 4;
 
@@ -28,7 +26,6 @@ function SummaryCard({ data, files, fileTypes, limit, numberOfPartners }) {
     ],
   };
 
-  console.log(fileTypes);
   return (
     <div className="SummaryCard">
       <div className="SummaryCard-content">
@@ -57,8 +54,6 @@ function SummaryCard({ data, files, fileTypes, limit, numberOfPartners }) {
             const isUploaded = files.filter(
               (f) => f.file_type === ft.name
             ).length;
-
-            console.log(isUploaded);
 
             return (
               <li key={index}>

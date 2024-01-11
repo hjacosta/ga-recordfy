@@ -1,6 +1,6 @@
 import React from "react";
 
-function SectionDivision({ title, containerStyle }) {
+function SectionDivision({ title, icon, containerStyle }) {
   const styles = {
     fontSize: 14,
     color: "grey",
@@ -15,10 +15,11 @@ function SectionDivision({ title, containerStyle }) {
       style={{
         display: "flex",
         width: "100%",
-        alignItems: "flex-start",
+        alignItems: "center",
         ...containerStyle,
       }}
     >
+      {icon}
       <p style={{ ...styles }}>{title}</p>
     </div>
   );

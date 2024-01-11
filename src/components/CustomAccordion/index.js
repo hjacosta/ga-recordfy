@@ -34,7 +34,7 @@ function CustomAcordion() {
           <CustomerCrud />
         </AccordionDetails>
       </Accordion>
-      <Accordion className="CustomAcordion-section">
+      {/* <Accordion className="CustomAcordion-section">
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
@@ -47,7 +47,7 @@ function CustomAcordion() {
         <AccordionDetails>
           <CustomerTypeCrud />
         </AccordionDetails>
-      </Accordion>
+      </Accordion> */}
       <SectionDivision title={"Archivos"} />
       <Accordion className="CustomAcordion-section">
         <AccordionSummary

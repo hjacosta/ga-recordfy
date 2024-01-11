@@ -36,13 +36,6 @@ function RecordDetailScreen() {
     ...records.filter((record) => record.record_code === recordCode)
   );
 
-  console.log(
-    "AAAAAAAAAAA",
-    recordCode,
-    records,
-    records.filter((record) => record.record_code === recordCode)
-  );
-
   const uploadForm = useFormik({
     initialValues: {
       filename: "",
@@ -61,13 +54,42 @@ function RecordDetailScreen() {
       expirationDate: Yup.date().required("Este campo no puede estar vacio"),
     }),
     onSubmit: async (values, { resetForm }) => {
+      let currentDate = new Date(values.expirationDate);
+
+      // console.log(currentDate.toISOString());
+
+      // let expDate = `${currentDate.getFullYear()}-${
+      //   currentDate.getMonth() + 1 <= 9
+      //     ? `0${currentDate.getMonth() + 1}`
+      //     : `${currentDate.getMonth() + 1}`
+      // }-${
+      //   currentDate.getDate() <= 9
+      //     ? `0${currentDate.getDate()}`
+      //     : `${currentDate.getDate()}`
+      // }T${
+      //   currentDate.getHours() <= 9
+      //     ? `0${currentDate.getHours()}`
+      //     : `${currentDate.getHours()}`
+      // }:${
+      //   currentDate.getMinutes() <= 9
+      //     ? `0${currentDate.getMinutes()}`
+      //     : `${currentDate.getMinutes()}`
+      // }:${
+      //   currentDate.getSeconds() <= 9
+      //     ? `0${currentDate.getSeconds()}`
+      //     : `${currentDate.getSeconds()}`
+      // }.${currentDate.getMilliseconds()}Z`;
+
+      // console.log(expDate);
+      // console.log(currentDate.toLocaleTimeString({ numeric: true }));
+
       try {
         let data = {
           filename: `${values.prefix}-${values.filename}.${values.fileExt}`,
           recordId: currentRecord.record_id,
           customerIdentification: currentRecord.identification_number,
           fileTypeId: values.fileTypeId,
-          expirationDate: new Date().toISOString(),
+          expirationDate: currentDate.toISOString(),
           partner: values.partner,
           modifiedBy: auth.userProfile.email,
           createdBy: auth.userProfile.email,
@@ -117,9 +139,6 @@ function RecordDetailScreen() {
         if (fileTypes.error === true) {
           throw new Error(fileTypes.body);
         }
-
-        // console.log("FILE TYPES: RecordDetailScreen 106", fileTypes);
-        console.log("RECORD FILES: RecordDetailScreen 107", recordFiles);
         setFileTypes(fileTypes.body);
 
         if (recordFiles.error === true) {
@@ -143,8 +162,6 @@ function RecordDetailScreen() {
     uploadForm.setFieldValue("fileTypeId", target.file_type_id);
     uploadForm.setFieldValue("prefix", target.prefix);
   };
-
-  console.log("type", recordId, records, currentRecord);
 
   return (
     <React.Fragment>

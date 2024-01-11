@@ -91,17 +91,6 @@ function CustomerTypeFile() {
                 style={{ cursor: "pointer" }}
               />
             </li>
-            <li>Cedula</li>
-            <li>Cedula</li>
-            <li>Cedula</li>
-            <li>Cedula</li>
-            <li>Cedula</li>
-            <li>Cedula</li>
-            <li>Cedula</li>
-            <li>Cedula</li>
-            <li>Cedula</li>
-            <li>Cedula</li>
-            <li>Cedula</li>
           </ul>
         </div>
         <div className="CustomerTypeFile-section right">
