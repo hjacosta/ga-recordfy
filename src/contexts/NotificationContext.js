@@ -16,7 +16,10 @@ function NotificationProvider({ children }) {
   // Listen for messages
   socket.addEventListener("message", (event) => {
     setNotifications([...JSON.parse(event.data), ...notifications]);
-    // notificationSound.play();
+    if (Object.entries(JSON.parse(event.data)).length > 0) {
+      notificationSound.play();
+    }
+    //
     // console.log(JSON.parse(event.data)[0]);
   });
 

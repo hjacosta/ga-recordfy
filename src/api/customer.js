@@ -27,6 +27,20 @@ async function createCustomerApi(data) {
   }
 }
 
+async function updateCustomerApi(data, customerId) {
+  try {
+    const customers = await request({
+      path: `/customer/${customerId}`,
+      method: "PUT",
+      data: data,
+    });
+
+    return customers;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 async function getCustomerTypeApi({ queryParams }) {
   try {
     const customerTypes = await request({
@@ -57,6 +71,7 @@ async function createCustomerTypeApi(data) {
 export {
   getCustomersApi,
   createCustomerApi,
+  updateCustomerApi,
   getCustomerTypeApi,
   createCustomerTypeApi,
 };

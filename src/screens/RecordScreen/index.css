@@ -1,3 +1,13 @@
+.RecordForm-wrapper {
+  width: 100%;
+  height: 630px;
+  margin-top: 12px;
+  /* padding-top: 20px; */
+  border-top: 1px solid #0000001a;
+  font-size: 13px;
+  overflow-y: auto;
+}
+
 .RecordForm-header {
   text-align: center;
   color: var(--text-black);
@@ -9,36 +19,115 @@
 
 .RecordForm-body {
   margin-top: 24px;
+  overflow-y: auto;
+  height: 550px;
+  box-sizing: border-box;
 }
 
 .RecordForm-group {
+  width: 100%;
   display: flex;
-  margin-top: 12px;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.RecordForm-group div {
+  width: 100%;
+  display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
+  margin: 0 4px;
 }
 
-.RecordForm-group:last-child {
-  margin-top: 24px;
+.RecordForm-group--pep {
+  display: flex;
+  padding-top: 4px;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.RecordForm-group span {
+.RecordForm-group--pep div {
+  display: flex;
+  align-items: center;
+}
+
+.RecordForm-group--pep label {
+  color: #5e6364;
+}
+
+.RecordForm-group input,
+.RecordForm-group select,
+.RecordForm-group textarea {
+  /* padding: 6px 12px; */
+  box-sizing: border-box;
+  padding: 0 6px;
+  height: 30px;
+  font-size: 13px;
+  border: 1px solid #e0e0e0;
+  background-color: transparent;
+  border-radius: 4px;
+}
+
+.RecordForm-group textarea {
+  height: auto;
+  padding: 6px;
+}
+
+.RecordForm-group select {
+  cursor: pointer;
+}
+
+.RecordForm-group input:focus,
+.RecordForm-group select:focus,
+.RecordForm-group textarea:focus {
+  outline: none;
+  box-shadow: 0 0 2px rgb(78, 161, 255), 0 0 3px rgb(78, 161, 255),
+    0 0 4px rgb(78, 161, 255);
+}
+
+.RecordForm-footer {
+  box-sizing: border-box;
+  margin-top: 8px;
+  padding: 0 8px;
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.RecordForm-footer div {
+  display: flex;
+}
+
+.RecordForm-footer span,
+.RecordForm-footer label,
+.RecordForm-footer input {
+  cursor: pointer;
+  color: rgb(16, 127, 255);
   font-size: 12px;
 }
 
-.RecordForm-group input {
-  height: 30px;
-  background-color: transparent;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  color: #757579;
+.RecordForm-footer input {
   cursor: pointer;
-  padding: 0 12px;
 }
 
-.RecordForm-group input:focus {
-  outline: none;
-  box-shadow: 0 0 5px #2e9cec;
+.RecordForm-footer button {
+  padding: 6px 16px;
+  border-radius: 4px;
+  background-color: var(--dark-blue);
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.RecordForm-footer button.disabled {
+  background-color: #e6dede;
+}
+
+.error {
+  color: rgb(253, 53, 53);
+  font-size: 11px;
 }
 
 .RecordForm-search {
@@ -48,25 +137,6 @@
   border-radius: 8px;
   height: 200px;
   box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
-}
-
-.RecordForm-customers {
-  height: 120px;
-  overflow-y: scroll;
-  margin: 8px 0 0 0;
-  padding: 0;
-  list-style: none;
-  font-size: 13px;
-  color: var(--dark-blue);
-  cursor: pointer
-}
-
-.RecordForm-customers li {
-  padding: 6px 12px
-}
-
-.RecordForm-customers li:hover{
-  background-color: #f6f2f2;
 }
 
 .RecordForm-search input:first-child {
@@ -91,16 +161,50 @@
   /* box-shadow: 0 0 2px rgba(0, 0, 0, 0.4); */
 }
 
-.RecordForm-group button {
-  height: 30px;
-  background-color: var(--dark-blue);
-  border: none;
-  color: var(--light-white);
-  border-radius: 4px;
+.RecordForm-customers {
+  width: 100%;
+  height: 120px;
+  overflow-y: scroll;
+  margin: 8px 0 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--dark-blue);
   cursor: pointer;
-  transition: all var(--anim-3);
 }
 
-.RecordForm-group button:hover {
-  background-color: #323f5b;
+.RecordForm-customers li {
+  padding: 6px 12px;
+}
+
+.RecordForm-customers li:hover {
+  background-color: #f6f2f2;
+}
+
+@media screen and (min-width: 768px) {
+  .RecordForm-wrapper::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .RecordForm-wrapper::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  .RecordForm-wrapper::-webkit-scrollbar-thumb {
+    display: block;
+  }
+
+  .RecordForm-wrapper::-webkit-scrollbar-thumb {
+    background: #e6dede;
+    border-radius: 10px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .RecordForm-wrapper {
+    height: 500px;
+  }
+  .RecordForm-group {
+    flex-wrap: wrap;
+  }
 }

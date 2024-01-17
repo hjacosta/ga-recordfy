@@ -1,6 +1,6 @@
 import React from "react";
 
-function SectionDivision({ title, icon, containerStyle }) {
+function SectionDivision({ title, icon, containerStyle, textStyle }) {
   const styles = {
     fontSize: 14,
     color: "grey",
@@ -20,7 +20,7 @@ function SectionDivision({ title, icon, containerStyle }) {
       }}
     >
       {icon}
-      <p style={{ ...styles }}>{title}</p>
+      <p style={{ ...styles, ...textStyle }}>{title}</p>
     </div>
   );
 }

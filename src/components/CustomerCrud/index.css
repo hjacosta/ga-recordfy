@@ -1,6 +1,6 @@
 .CustomerForm-wrapper {
   width: 100%;
-  height: 90%;
+  height: 630px;
   margin-top: 12px;
   /* padding-top: 20px; */
   border-top: 1px solid rgba(0, 0, 0, 0.1);
@@ -111,6 +111,10 @@
   cursor: pointer;
 }
 
+.CustomerForm-footer button.disabled {
+  background-color: #e6dede;
+}
+
 .error {
   color: rgb(253, 53, 53);
   font-size: 11px;
@@ -136,6 +140,9 @@
 }
 
 @media screen and (max-width: 768px) {
+  .CustomerForm-wrapper {
+    height: 500px;
+  }
   .CustomerForm-group {
     flex-wrap: wrap;
   }

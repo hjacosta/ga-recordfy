@@ -9997,6 +9997,5 @@
 ];
 
 export async function getStates(countryId) {
-  console.log(countryId);
   return states.filter((state) => state.id_country == countryId);
 }

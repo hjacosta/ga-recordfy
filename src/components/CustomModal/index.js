@@ -7,17 +7,15 @@ import "./index.css";
 
 const style = {};
 
-function CustomModal({ children, open, setOpen }) {
-  // const [open, setOpen] = React.useState(false);
-
-  const handleClose = () => setOpen(false);
-
+function CustomModal({ children, open, onClose }) {
   return (
     <div>
       <Modal
         style={{ margin: "0 16px" }}
         open={open}
-        onClose={handleClose}
+        onClose={() => {
+          onClose();
+        }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >

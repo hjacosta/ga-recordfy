@@ -7,57 +7,17 @@ import { errorHandler } from "../../utils/errorhandler";
 import { useNavigate } from "react-router-dom";
 import { AccordionForm } from "../AccordionForm";
 import { useFormik } from "formik";
+import { DTOptionsMenu } from "../DTOptionsMenu";
 import * as Yup from "yup";
 import { InputMask } from "@react-input/mask";
 
 function FileTypeCrud() {
-  const generalColumns = [
-    {
-      name: "Creado por",
-      selector: (row) => row.created_by,
-      reorder: true,
-    },
-    {
-      name: "Creado",
-      selector: (row) => row.created_at,
-      reorder: true,
-    },
-    {
-      name: "Modificado por",
-      selector: (row) => row.modified_by,
-      reorder: true,
-    },
-    {
-      name: "Creado por",
-      selector: (row) => row.modified_at,
-      reorder: true,
-    },
-    {
-      name: "Opciones",
-      //selector: (row) => row.modified_at,
-      reorder: false,
-    },
-  ];
-
-  const fileTypeColumns = [
-    {
-      name: "Descripción",
-      selector: (row) => row.name,
-      reorder: true,
-    },
-    {
-      name: "Prefijo",
-      selector: (row) => row.prefix,
-      reorder: true,
-    },
-    ...generalColumns,
-  ];
-
+  const { logout } = React.useContext(AuthContext);
   const [fileType, setFileType] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [toggleReq, setToggleReq] = React.useState(false);
   const [formVisible, setFormVisible] = React.useState(false);
-  const { logout } = React.useContext(AuthContext);
+  const [preDataUpdate, setPreDataUpdate] = React.useState({});
   const navigate = useNavigate();
 
   const [searchParams, setSearchParams] = React.useState({});
@@ -75,6 +35,54 @@ function FileTypeCrud() {
       active: false,
     },
   ]);
+
+  const generalColumns = [
+    {
+      name: "Creado por",
+      selector: (row) => row.created_by,
+      reorder: true,
+    },
+    {
+      name: "Creado en",
+      selector: (row) => row.created_at,
+      reorder: true,
+    },
+    {
+      name: "Modificado por",
+      selector: (row) => row.last_modified_by,
+      reorder: true,
+    },
+    {
+      name: "Modificado en",
+      selector: (row) => row.last_modified_at,
+      reorder: true,
+    },
+    {
+      name: "Opciones",
+      selector: (row) => (
+        <DTOptionsMenu
+          row={row}
+          setCurrentItem={setPreDataUpdate}
+          setFormVisible={setFormVisible}
+        />
+      ),
+      reorder: false,
+    },
+  ];
+
+  const fileTypeColumns = [
+    {
+      name: "Descripción",
+      selector: (row) => row.name,
+      reorder: true,
+    },
+    {
+      name: "Prefijo",
+      selector: (row) => row.prefix,
+      reorder: true,
+    },
+    ...generalColumns,
+  ];
 
   React.useEffect(() => {
     (async () => {
@@ -100,6 +108,15 @@ function FileTypeCrud() {
     })();
   }, [toggleReq, searchParams]);
 
+  React.useEffect(() => {
+    (() => {
+      console.log(formVisible);
+      if (formVisible == false) {
+        setPreDataUpdate({});
+      }
+    })();
+  }, [formVisible]);
+
   return (
     <>
       <SearchBar
@@ -107,6 +124,7 @@ function FileTypeCrud() {
         addButton={{
           label: "Añadir tipo archivo",
           onClick: () => {
+            setPreDataUpdate({});
             setFormVisible(!formVisible);
           },
         }}
@@ -128,6 +146,8 @@ function FileTypeCrud() {
           <FileTypeForm
             setIsLoading={setIsLoading}
             setToggleReq={setToggleReq}
+            preDataUpdate={preDataUpdate}
+            setPreDataUpdate={setPreDataUpdate}
           />
         }
       />
@@ -140,7 +160,12 @@ function FileTypeCrud() {
   );
 }
 
-function FileTypeForm({ setIsLoading, setToggleReq }) {
+function FileTypeForm({
+  setIsLoading,
+  setToggleReq,
+  preDataUpdate,
+  setPreDataUpdate,
+}) {
   const { auth, logout } = React.useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -152,13 +177,14 @@ function FileTypeForm({ setIsLoading, setToggleReq }) {
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Campo requerido"),
+      prefix: Yup.string().required("Campo requerido"),
     }),
     validateOnChange: false,
     onSubmit: async (values, { resetForm }) => {
       let data = {
         ...values,
         createdBy: auth.userProfile.email,
-        modifiedBy: auth.userProfile.email,
+        lastModifiedBy: auth.userProfile.email,
       };
 
       try {
@@ -180,6 +206,40 @@ function FileTypeForm({ setIsLoading, setToggleReq }) {
       resetForm();
     },
   });
+
+  React.useEffect(() => {
+    (() => {
+      if (Object.entries(preDataUpdate).length > 0) {
+        fileTypeForm.setFieldValue("name", preDataUpdate.name);
+        fileTypeForm.setFieldValue("prefix", preDataUpdate.prefix);
+        // let arr = Object.entries(preDataUpdate).map((item) => {
+        //   let key = snakeToCamel(item[0]);
+
+        //   return {
+        //     [key]: item[1],
+        //   };
+        // });
+
+        // let obj = {};
+        // let keys = Object.keys(form.initialValues);
+        // //console.log(keys);
+        // arr.sort().forEach((item, index) => {
+        //   let [key, value] = Object.entries(item)[0];
+        //   //console.log(index + 1, key);
+        //   if (keys.filter((item) => item == key).length > 0) {
+        //     obj[key] = key.toLowerCase().includes("date")
+        //       ? value.split("T")[0]
+        //       : value;
+        //   }
+        // });
+
+        // setLastFormValue(obj);
+        // setIsSaveBtnDisabled(true);
+      } else {
+        fileTypeForm.resetForm();
+      }
+    })();
+  }, [preDataUpdate]);
 
   let userFields = [
     {
