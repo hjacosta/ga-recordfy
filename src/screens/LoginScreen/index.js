@@ -29,7 +29,6 @@ function LoginScreen() {
       try {
         setIsLoading(true);
         const userData = await loginApi({ username, password });
-        console.log(userData);
         login(userData.body);
         resetForm();
       } catch (error) {

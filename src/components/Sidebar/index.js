@@ -55,7 +55,6 @@ function Sidebar() {
   ]);
 
   const selectItem = (label) => {
-    console.log(label);
     let options = [...sidebarItems];
 
     options.forEach((sidebarItem) => {
@@ -136,7 +135,6 @@ function SidebarItem(props) {
       <NavLink
         onClick={(e) => {
           props.selectItem(props.item.label);
-          console.log(props.item);
         }}
         className={`sidebar-body-list-item `}
         to={props.link}

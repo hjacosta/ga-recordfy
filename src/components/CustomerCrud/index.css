@@ -146,4 +146,7 @@
   .CustomerForm-group {
     flex-wrap: wrap;
   }
+  .CustomerForm-group--pep div {
+    margin: 4px 0;
+  }
 }

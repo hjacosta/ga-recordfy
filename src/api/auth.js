@@ -31,7 +31,6 @@ async function loginApi({ username, password }) {
     const res = await fetch(`${serverURL}/auth/signin`, options);
 
     const result = await res.json();
-    console.log(result);
     if (result.error) {
       throw new Error(result.body);
     }

@@ -1,6 +1,6 @@
 .RecordForm-wrapper {
   width: 100%;
-  height: 630px;
+  height: 640px;
   margin-top: 12px;
   /* padding-top: 20px; */
   border-top: 1px solid #0000001a;
@@ -163,7 +163,7 @@
 
 .RecordForm-customers {
   width: 100%;
-  height: 120px;
+  height: 150px;
   overflow-y: scroll;
   margin: 8px 0 0 0;
   padding: 0;

@@ -1,4 +1,4 @@
-.CustomerTypeFile-wrapper {
+.BeneficiaryTypeFile-wrapper {
   margin-bottom: 8px;
   width: 100%;
   display: flex;
@@ -6,28 +6,28 @@
   gap: 26px;
 }
 
-.CustomerTypeFile-section {
+.BeneficiaryTypeFile-section {
   background-color: transparent;
   flex: 1;
   flex-basis: 300px;
   height: 300px;
 }
 
-.CustomerTypeFile-section.left {
+.BeneficiaryTypeFile-section.left {
   background-color: rgb(252, 252, 255);
   border-radius: 8px;
   box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
 }
 
-.CustomerTypeFile-section select {
+.BeneficiaryTypeFile-section select {
   width: 100%;
   height: 40px;
   border-radius: 6px;
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.CustomerTypeFile-section-list {
+.BeneficiaryTypeFile-section-list {
   width: 100%;
   height: 83%;
   background-color: rgb(252, 252, 255);
@@ -37,7 +37,7 @@
   padding-top: 8px;
 }
 
-.CustomerTypeFile-footer button {
+.BeneficiaryTypeFile-footer button {
   margin-top: 8px;
   width: 100%;
   height: 40px;
@@ -49,18 +49,18 @@
   transition: background-color 300ms;
 }
 
-.CustomerTypeFile-footer button:hover {
+.BeneficiaryTypeFile-footer button:hover {
   background-color: #3d4c6d;
 }
 
-.CustomerTypeFile-section,
-.CustomerTypeFile-section-list {
+.BeneficiaryTypeFile-section,
+.BeneficiaryTypeFile-section-list {
   box-sizing: border-box;
   padding: 12px;
 }
 
-.CustomerTypeFile-section ul,
-.CustomerTypeFile-section-list ul {
+.BeneficiaryTypeFile-section ul,
+.BeneficiaryTypeFile-section-list ul {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -69,8 +69,8 @@
   flex-wrap: wrap;
 }
 
-.CustomerTypeFile-section ul li,
-.CustomerTypeFile-section-list ul li {
+.BeneficiaryTypeFile-section ul li,
+.BeneficiaryTypeFile-section-list ul li {
   display: flex;
   flex: 1;
   flex-basis: 170px;

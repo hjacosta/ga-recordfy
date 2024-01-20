@@ -9,11 +9,11 @@ import { SearchBar } from "../SearchBar";
 import { getCustomersApi, getCustomerTypeApi } from "../../api/customer";
 import { CustomerCrud } from "../CustomerCrud";
 import { CustomerTypeCrud } from "../CustomerTypeCrud";
-import "./index.css";
 import { TopBar } from "../TopBar";
 import { FileTypeCrud } from "../FileTypeCrud";
 import { SectionDivision } from "../SectionDivision";
-import { CustomerTypeFile } from "../CustomerTypeFile";
+import { BeneficiaryTypeFile } from "../BeneficiaryTypeFile";
+import "./index.css";
 
 function CustomAcordion() {
   return (
@@ -74,7 +74,7 @@ function CustomAcordion() {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <CustomerTypeFile />
+          <BeneficiaryTypeFile />
         </AccordionDetails>
       </Accordion>
     </div>

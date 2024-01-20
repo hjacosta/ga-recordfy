@@ -17,9 +17,10 @@ import { NoDataFound } from "../../components/NoDataFound";
 import { Loader } from "../../components/Loader";
 import { createNotification } from "../../utils/notifications";
 import { NotificationManager } from "react-notifications";
-import "react-notifications/lib/notifications.css";
 import { SectionDivision } from "../../components/SectionDivision";
 import { getCountries } from "../../utils/preData/countries";
+import { InputMask } from "@react-input/mask";
+import "react-notifications/lib/notifications.css";
 
 function RecordScreen() {
   const { auth, logout } = React.useContext(AuthContext);
@@ -32,6 +33,7 @@ function RecordScreen() {
   const [searchedText, setSearchedText] = React.useState("");
   const [isFormOpened, setIsFormOpened] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isSaveBtnDisabled, setIsSaveBtnDisabled] = React.useState(false);
 
   const recordForm = useFormik({
     initialValues: {
@@ -56,9 +58,12 @@ function RecordScreen() {
         recordCode: values.recordCode,
         customerId: values.customerId,
         numberOfBeneficiaries: values.numberOfBeneficiaries,
+        beneficiaries: currentBeneficiaries,
         createdBy: auth.userProfile.email,
-        modifiedBy: auth.userProfile.email,
+        lastModifiedBy: auth.userProfile.email,
       };
+
+      console.log(data);
 
       try {
         let res = await createRecordApi(data);
@@ -74,21 +79,11 @@ function RecordScreen() {
 
         if (error.message.includes("already exists"))
           NotificationManager.error("error", "Ya existe el expediente");
-
-        if (
-          error.message.includes("record_code") &&
-          error.message.includes("unique")
-        ) {
-          recordForm.setFieldValue(
-            "recordCode",
-            parseInt(recordForm.values.recordCode) + 1
-          );
-        }
       }
     },
   });
 
-  console.log(searchParams);
+  console.log(recordForm.errors);
 
   React.useEffect(() => {
     (async () => {
@@ -135,10 +130,6 @@ function RecordScreen() {
     })();
   }, [searchParams, requestToggle]);
 
-  const handleOpenForm = () => {
-    setIsFormOpened(true);
-  };
-
   const handleCustomerSelection = (customer) => {
     recordForm.setFieldValue("customerId", customer.customer_id);
     recordForm.setFieldValue("customerName", `${customer.customer_name}`);
@@ -152,20 +143,7 @@ function RecordScreen() {
     return matchcase.toLowerCase().includes(searchedText.toLowerCase());
   });
 
-  const [currentBeneficiaries, setCurrentBenficiaries] = React.useState([
-    {
-      order: undefined,
-      beneficiaryType: undefined,
-      name: undefined,
-      identificationType: undefined,
-      identificationNumber: undefined,
-      nationality: 138,
-      stockPercentage: undefined,
-      isPep: undefined,
-      isPolitician: undefined,
-      isPoliticianRelative: undefined,
-    },
-  ]);
+  const [currentBeneficiaries, setCurrentBenficiaries] = React.useState([]);
   const [searchItems, setSearchItems] = React.useState([
     {
       label: "Cédula/Pasaporte",
@@ -191,14 +169,18 @@ function RecordScreen() {
     // },
   ]);
   const [countries, setCountries] = React.useState([]);
+  const [identificationMask, setIdentificationMask] =
+    React.useState("___-_______-_");
 
   const updateBeneficiaryField = (index, prop, value) => {
     let newBeneficiaries = currentBeneficiaries;
 
     newBeneficiaries[index][prop] = value;
+    newBeneficiaries[index].order = index;
 
     console.log("HERE", value);
     console.log(currentBeneficiaries);
+    setIdentificationMask("___-_______-_");
     setCurrentBenficiaries(newBeneficiaries);
   };
 
@@ -208,6 +190,24 @@ function RecordScreen() {
       setCountries(res);
     })();
   }, []);
+
+  const handleOpenForm = () => {
+    setIsFormOpened(true);
+    setCurrentBenficiaries([
+      {
+        order: 0,
+        beneficiaryType: "PHYSICAL_PERSON",
+        name: "",
+        identificationType: "PERSONAL_ID",
+        identificationNumber: "",
+        nationality: 138,
+        stocksPercentage: 0,
+        isPep: false,
+        isPolitician: false,
+        isPoliticianRelative: false,
+      },
+    ]);
+  };
 
   const handleClose = () => {
     recordForm.resetForm();
@@ -227,22 +227,22 @@ function RecordScreen() {
             <h2>Nuevo Expediente</h2>
           </div>
           <div className="RecordForm-wrapper">
-            <SectionDivision title={"Información general"} />
+            <SectionDivision title={"Información del cliente"} />
             <div className="RecordForm-group">
               <div>
                 <span className="">Código expediente</span>
                 <input
                   type="text"
                   disabled
-                  value={recordForm.values.customerName}
+                  value={recordForm.values.recordCode}
                   onChange={(e) =>
                     recordForm.setFieldValue(
-                      "customerName",
+                      "recordCode",
                       e.target.value.toUpperCase()
                     )
                   }
                 />
-                <span className="error">{recordForm.errors.customerName}</span>
+                <span className="error">{recordForm.errors.recordCode}</span>
               </div>
               <div>
                 <span className="">Cliente</span>
@@ -287,6 +287,7 @@ function RecordScreen() {
                 </ul>
               </div>
             </div>
+            <SectionDivision title={"Beneficiarios"} />
             <div className="RecordForm-group">
               <div>
                 <span className="required">Número de benficiarios</span>
@@ -300,16 +301,16 @@ function RecordScreen() {
                     let arr = [];
                     for (let i = 0; i < parseInt(e.target.value); i++) {
                       arr.push({
-                        order: undefined,
-                        beneficiaryType: undefined,
-                        name: undefined,
-                        identificationType: undefined,
-                        identificationNumber: undefined,
-                        nationality: undefined,
-                        stockPercentage: undefined,
-                        isPep: undefined,
-                        isPolitician: undefined,
-                        isPoliticianRelative: undefined,
+                        order: 0,
+                        beneficiaryType: "PHYSICAL_PERSON",
+                        name: "",
+                        identificationType: "PERSONAL_ID",
+                        identificationNumber: "",
+                        nationality: 138,
+                        stocksPercentage: 0,
+                        isPep: false,
+                        isPolitician: false,
+                        isPoliticianRelative: false,
                       });
                     }
                     setCurrentBenficiaries(arr);
@@ -324,125 +325,253 @@ function RecordScreen() {
                 <span className="error">{recordForm.errors.customerName}</span>
               </div>
             </div>
-            {Array.from(Array(recordForm.values.numberOfBeneficiaries)).map(
-              (item, index) => (
-                <div
-                  key={index}
-                  style={{
-                    border: "1px solid rgba(0,0,0,0.1)",
-                    padding: "12px 12px 8px 12px",
-                    borderRadius: 8,
-                    marginBottom: 12,
-                  }}
-                >
-                  <SectionDivision
-                    title={`Beneficiario ${index + 1}`}
-                    textStyle={{ marginTop: 6, marginBottom: 14 }}
-                  />
-                  <div className="RecordForm-group">
-                    <div>
-                      <span className="">Tipo de beneficiario</span>
-                      <select
-                        type="text"
-                        value={currentBeneficiaries[index]?.beneficiaryType}
-                        onChange={(e) =>
-                          updateBeneficiaryField(
-                            index,
-                            "beneficiaryType",
-                            e.target.value
-                          )
-                        }
-                      >
-                        <option value="PHYSICAL_PERSON">Persona Física</option>
-                        <option value="LEGAL_PERSON">Persona Jurídica</option>
-                      </select>
-                      <span className="error">
-                        {recordForm.errors.customerName}
-                      </span>
-                    </div>
-
-                    <div>
-                      <span className="">Tipo de identificación</span>
-                      <input
-                        type="text"
-                        value={currentBeneficiaries[index]?.identificationType}
-                        onChange={(e) =>
-                          updateBeneficiaryField(
-                            index,
-                            "identificationType",
-                            e.target.value
-                          )
-                        }
-                      />
-                      <span className="error">
-                        {recordForm.errors.customerName}
-                      </span>
-                    </div>
+            {currentBeneficiaries?.map((item, index) => (
+              <div
+                key={index}
+                style={{
+                  border: "1px solid rgba(0,0,0,0.1)",
+                  padding: "12px 12px 8px 12px",
+                  borderRadius: 8,
+                  marginBottom: 12,
+                }}
+              >
+                <SectionDivision
+                  title={`Beneficiario ${index + 1}`}
+                  textStyle={{ marginTop: 6, marginBottom: 14 }}
+                />
+                <div className="RecordForm-group">
+                  <div>
+                    <span className="">Nombre</span>
+                    <input
+                      type="text"
+                      // value={currentBeneficiaries[index]?.name}
+                      onChange={(e) => {
+                        console.log(e.target.value);
+                        updateBeneficiaryField(
+                          index,
+                          "name",
+                          e.target.value.toUpperCase()
+                        );
+                      }}
+                    />
+                    <span className="error">
+                      {recordForm.errors.customerName}
+                    </span>
                   </div>
-                  <div className="RecordForm-group">
-                    <div>
-                      <span className="">Nombre</span>
-                      <input
-                        type="text"
-                        value={currentBeneficiaries[index]?.name}
-                        onChange={(e) => {
-                          console.log(e.target.value);
-                          updateBeneficiaryField(
-                            index,
-                            "name",
-                            e.target.value.toUpperCase()
-                          );
-                        }}
-                      />
-                      <span className="error">
-                        {recordForm.errors.customerName}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="">Nacionalidad</span>
-                      <select
-                        type="text"
-                        value={currentBeneficiaries[index]?.nationality}
-                        onChange={(e) =>
-                          updateBeneficiaryField(
-                            index,
-                            "nationality",
-                            e.target.value
-                          )
-                        }
-                      >
-                        {countries.map(({ id, name }) => (
-                          <option key={id} value={id}>
-                            {name}
-                          </option>
-                        ))}
-                      </select>
-                      <span className="error">
-                        {recordForm.errors.customerName}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="">Porcentaje de acciones</span>
-                      <input
-                        type="text"
-                        value={currentBeneficiaries[index]?.name}
-                        onChange={(e) => {
-                          console.log(e.target.value);
-                          updateBeneficiaryField(
-                            index,
-                            "name",
-                            e.target.value.toUpperCase()
-                          );
-                        }}
-                      />
-                      <span className="error">
-                        {recordForm.errors.customerName}
-                      </span>
-                    </div>
+                  <div>
+                    <span className="">Nacionalidad</span>
+                    <select
+                      type="text"
+                      // value={currentBeneficiaries[index]?.nationality}
+                      onChange={(e) =>
+                        updateBeneficiaryField(
+                          index,
+                          "nationality",
+                          e.target.value
+                        )
+                      }
+                    >
+                      {countries.map(({ id, name }) => (
+                        <option key={id} value={id}>
+                          {name}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="error">
+                      {recordForm.errors.customerName}
+                    </span>
                   </div>
                 </div>
-              )
-            )}
+                <div className="RecordForm-group">
+                  <div>
+                    <span className="">Tipo de beneficiario</span>
+                    <select
+                      type="text"
+                      //value={currentBeneficiaries[index]?.beneficiaryType}
+                      onChange={(e) =>
+                        updateBeneficiaryField(
+                          index,
+                          "beneficiaryType",
+                          e.target.value
+                        )
+                      }
+                    >
+                      <option value="PHYSICAL_PERSON">Persona Física</option>
+                      <option value="LEGAL_PERSON">Persona Jurídica</option>
+                    </select>
+                    <span className="error">
+                      {recordForm.errors.customerName}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="">Tipo de identificación</span>
+                    <select
+                      type="text"
+                      //value={currentBeneficiaries[index]?.identificationType}
+                      onChange={(e) => {
+                        updateBeneficiaryField(
+                          index,
+                          "identificationType",
+                          e.target.value
+                        );
+
+                        let mask = "";
+                        switch (e.target.value) {
+                          case "RNC":
+                            mask = "___-_____-_";
+                            break;
+                          case "PERSONAL_ID":
+                            mask = "___-_______-_";
+                            break;
+                          case "PASSPORT":
+                            mask = "_________";
+                            break;
+                          default:
+                            break;
+                        }
+                        updateBeneficiaryField(
+                          index,
+                          "identificationNumber",
+                          ""
+                        );
+                        setIdentificationMask(mask);
+                      }}
+                    >
+                      <option value="PERSONAL_ID">Cédula</option>
+                      <option value="RNC">RNC</option>
+                      <option value="PASSPORT">Pasaporte</option>
+                    </select>
+                    <span className="error">
+                      {recordForm.errors.customerName}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="">Número de identificación</span>
+                    <InputMask
+                      showMask={true}
+                      mask={identificationMask}
+                      replacement={{ _: /\d/ }}
+                      type="text"
+                      //value={currentBeneficiaries[index].identificationNumber}
+                      onChange={(e) =>
+                        updateBeneficiaryField(
+                          index,
+                          "identificationNumber",
+                          e.target.value
+                        )
+                      }
+                    />
+                    <span className="error">
+                      {recordForm.errors.customerName}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="">Porcentaje de acciones (%)</span>
+                    <input
+                      type="text"
+                      // value={currentBeneficiaries[index]?.stocksPercentage}
+                      onChange={(e) => {
+                        console.log(e.target.value);
+                        updateBeneficiaryField(
+                          index,
+                          "stocksPercentage",
+                          e.target.value
+                        );
+                      }}
+                    />
+                    <span className="error">
+                      {recordForm.errors.customerName}
+                    </span>
+                  </div>
+                </div>
+                <div className="CustomerForm-group--pep">
+                  <div>
+                    <input
+                      id="isPep"
+                      // value={recordForm.values.isPep}
+                      type="checkbox"
+                      onChange={(e) => {
+                        updateBeneficiaryField(
+                          index,
+                          "isPep",
+                          Boolean(e.target.value)
+                        );
+                        // console.log(e.target.checked);
+                      }}
+                    />
+                    <label for="isPep">
+                      Es una persona politicamente expuesta
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      id="isPolitician"
+                      // value={recordForm.values.isPolitician}
+                      type="checkbox"
+                      onChange={(e) => {
+                        updateBeneficiaryField(
+                          index,
+                          "isPolitician",
+                          Boolean(e.target.value)
+                        );
+                        // console.log(e.target.checked);
+                      }}
+                    />
+                    <label for="isPolitician">
+                      ¿Ha ocupado alguna posición como funcionario público o
+                      dirigente político en lo último 5 años?
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      id="isPoliticianRelative"
+                      // value={recordForm.values.isPoliticianRelative}
+                      type="checkbox"
+                      onChange={(e) => {
+                        updateBeneficiaryField(
+                          index,
+                          "isPoliticianRelative",
+                          Boolean(e.target.value)
+                        );
+                        // console.log(e.target.checked);
+                      }}
+                    />
+                    <label for="isPoliticianRelative">
+                      ¿Es algún miembro de su familia nuclear o familiar hasta
+                      el tercer grado servidor público en el estado dominicano?
+                    </label>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="RecordForm-footer">
+            <span
+              onClick={() => {
+                handleClose(false);
+              }}
+            >
+              Cancelar
+            </span>
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "0 12px",
+                }}
+              >
+                <input id="openNew" name="openNew" type="checkbox" />
+                <label for="openNew">Al guardar, abrir uno nuevo</label>
+              </div>
+              <button
+                className={`${isSaveBtnDisabled ? "disabled" : ""}`}
+                disabled={isSaveBtnDisabled}
+                onClick={() => recordForm.handleSubmit()}
+              >
+                Guardar
+              </button>
+            </div>
           </div>
           {/* <div className="RecordForm-body">
             <div className="RecordForm-group">

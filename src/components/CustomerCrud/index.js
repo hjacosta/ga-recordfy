@@ -321,7 +321,7 @@ function CustomerForm({
       setIsFormOpened(false);
       setIsLoading(false);
       console.log("hi");
-      //resetForm();
+      resetForm();
     },
   });
 

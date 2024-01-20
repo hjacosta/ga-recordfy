@@ -8,7 +8,7 @@ function ListItemCard({ data, limit }) {
 
   // console.log("#########", limit, data);
   let fileLimit =
-    limit.filter((i) => i.name == data.customer_type)[0]?.limit || 4;
+    limit.filter((i) => i.name == data.customer.customer_type)[0]?.limit || 4;
 
   return (
     <div
@@ -16,14 +16,14 @@ function ListItemCard({ data, limit }) {
       onClick={() => navigate(`/records/${data.record_code}`)}
     >
       <div className="ListItemCard-header">
-        <p>{`${data.customer_name}`}</p>
-        <span>{data.identification_number}</span>
+        <p>{`${data.customer.customer_name}`}</p>
+        <span>{data.customer.identification_number}</span>
         <div
           className="ListItemCard-header-status"
           style={getStatusColor(
             setStatusFromFileNumber(
               data.file_amount,
-              fileLimit * parseInt(data.number_of_partners)
+              fileLimit * parseInt(data.number_of_beneficiaries)
             )
           )} //fileLimit to be replace by data.file_limit
         ></div>
@@ -42,7 +42,7 @@ function ListItemCard({ data, limit }) {
             <span>Archivos</span>
             <span>
               {data.file_amount} de{" "}
-              {fileLimit * parseInt(data.number_of_partners)}
+              {fileLimit * parseInt(data.number_of_beneficiaries)}
             </span>
           </li>
           <li>
