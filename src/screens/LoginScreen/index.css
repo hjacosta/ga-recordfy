@@ -25,9 +25,9 @@
 
 .logo {
   display: flex;
-  width: 280px;
+  width: 180px;
   align-self: center;
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 .logo-no-txt {
@@ -137,7 +137,7 @@
 
   .logo {
     width: 110px;
-    margin-bottom: 20px;
+    margin-bottom: 0;
   }
 
   .form-container {

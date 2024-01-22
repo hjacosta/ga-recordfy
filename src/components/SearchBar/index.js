@@ -76,7 +76,7 @@ function SearchBar({
   return (
     <div className={`search-bar ${customClass || ""}`}>
       <div className="search-bar-group first-group">
-        <label>{mainLabel || "¿Qué estás buscando?"}</label>
+        <label>{mainLabel || "Buscar"}</label>
         <input
           className="search-bar-input"
           type="search"

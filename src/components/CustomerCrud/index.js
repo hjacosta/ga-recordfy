@@ -28,6 +28,7 @@ import { ConfirmModal } from "../ConfirmModal";
 import { isEqual } from "lodash";
 import { snakeToCamel } from "../../utils/stringFunctions";
 import "./index.css";
+import getLabelName from "../../utils/appLabels";
 
 function CustomerCrud() {
   const { logout } = React.useContext(AuthContext);
@@ -99,7 +100,7 @@ function CustomerCrud() {
   ];
   const customersColumns = [
     {
-      name: "Nombre / Rezón Social",
+      name: "Nombre / Razón Social",
       selector: (row) => row.customer_name,
       sortable: true,
       reorder: true,
@@ -124,7 +125,7 @@ function CustomerCrud() {
     },
     {
       name: "Tipo Cliente",
-      selector: (row) => row.customer_type,
+      selector: (row) => getLabelName(row.customer_type),
       sortable: true,
       reorder: true,
     },
@@ -1009,7 +1010,8 @@ function CustomerForm({
       <ConfirmModal
         isOpen={isConfirmOpen}
         setIsOpen={setIsConfirmOpen}
-        closeForm={handleClose}
+        confirmFunction={handleClose}
+        modalType={"FORM"}
       />
     </>
   );

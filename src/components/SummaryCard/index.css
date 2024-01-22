@@ -5,7 +5,7 @@
     flex-wrap: wrap;
     justify-content: flex-start;
     align-items: flex-end;
-    gap: 128px;
+    gap: 60px;
     background-color: transparent;
     padding:  40px 20px;
     border-radius: 8px;
@@ -17,7 +17,8 @@
 
 
 .SummaryCard-content {
-
+    display: flex;
+    flex-direction: column;
     /* text-align: center; */
 }
 
@@ -33,6 +34,10 @@
     margin: 2px 0
 }
 
+.SummaryCard-content-item span {
+    color: #575555;
+}
+
 .SummaryCard-content-item span:first-child{
     display: inline-block;
     width: 200px;
@@ -42,6 +47,10 @@
     /* gap: 8px; */
     /* color: var(--text-blue); */
     
+}
+
+.SummaryCard-content-item span:last-child{
+    font-weight: 500;
 }
 
 /* .SummaryCard-content-item span:last-child{
@@ -70,4 +79,31 @@
 .SummaryCard-img span{
     display: inline-block;
     width: 100px;
+}
+
+.SummaryCard-img.chart {
+    width: 170px
+}
+
+@media screen and (max-width: 768px) {
+
+    /* .SummaryCard {
+        justify-content: center;
+    } */
+
+    .SummaryCard-content-item {
+        display: flex;
+        flex-direction: column;
+        /* text-align: center; */
+    }
+
+    .SummaryCard-content {
+        gap: 12px   
+    }
+
+    .SummaryCard-img.chart {
+        display: flex;
+        justify-content: center;
+        width: 100%
+    }
 }

@@ -1,19 +1,26 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { setStatusFromFileNumber, getStatusColor } from "../../utils/records";
+import getLabelName from "../../utils/appLabels";
 import "./index.css";
 
 function ListItemCard({ data, limit }) {
   const navigate = useNavigate();
 
-  // console.log("#########", limit, data);
-  let fileLimit =
-    limit.filter((i) => i.name == data.customer.customer_type)[0]?.limit || 4;
+  let requiredFiles = data.beneficiaries.reduce(
+    (acc, item) => acc + item.required_files,
+    0
+  );
+
+  let recordFiles = data.beneficiaries.reduce(
+    (acc, item) => acc + item.record_files.length,
+    0
+  );
 
   return (
     <div
       className="ListItemCard"
-      onClick={() => navigate(`/records/${data.record_code}`)}
+      onClick={() => navigate(`/records/${data.record_id}`)}
     >
       <div className="ListItemCard-header">
         <p>{`${data.customer.customer_name}`}</p>
@@ -21,11 +28,8 @@ function ListItemCard({ data, limit }) {
         <div
           className="ListItemCard-header-status"
           style={getStatusColor(
-            setStatusFromFileNumber(
-              data.file_amount,
-              fileLimit * parseInt(data.number_of_beneficiaries)
-            )
-          )} //fileLimit to be replace by data.file_limit
+            setStatusFromFileNumber(recordFiles, requiredFiles)
+          )}
         ></div>
       </div>
       <div className="ListItemCard-detail">
@@ -36,13 +40,12 @@ function ListItemCard({ data, limit }) {
           </li>
           <li>
             <span>Tipo de Cliente</span>
-            <span>{data.customer_type}</span>
+            <span>{getLabelName(data.customer.customer_type)}</span>
           </li>
           <li>
             <span>Archivos</span>
             <span>
-              {data.file_amount} de{" "}
-              {fileLimit * parseInt(data.number_of_beneficiaries)}
+              {recordFiles} de {requiredFiles}
             </span>
           </li>
           <li>

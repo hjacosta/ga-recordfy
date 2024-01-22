@@ -104,9 +104,9 @@ function RecordScreen() {
         }
 
         setRecords(records.body);
-        const maxRecordCode = Math.max(
-          ...records.body.map((i) => i.record_code)
-        );
+        // const maxRecordCode = Math.max(
+        //   ...records.body.map((i) => i.record_code)
+        // );
 
         // recordForm.setFieldValue("recordCode", maxRecordCode + 1);
       } catch (error) {
@@ -665,7 +665,7 @@ function RecordScreen() {
       <Layout>
         <SearchBar
           mainLabel={"Búsqueda por nombre"}
-          mainFilter={"firstName"}
+          mainFilter={"customerName"}
           searchItems={searchItems}
           setSearchItems={setSearchItems}
           setSearchParams={setSearchParams}

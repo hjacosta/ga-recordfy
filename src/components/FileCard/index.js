@@ -24,12 +24,12 @@ function FileCard({ data, handleRemove }) {
       />
       <NavLink
         style={{ textDecoration: "none", color: "var(--text-black)" }}
-        to={data.file_location}
+        to={data.source}
         target="_blank"
       >
         <CardHeader>
-          <p style={{ textTransform: "uppercase" }}>{data.file_type}</p>
-          <span>Exp. {data.expiration_date}</span>
+          <p style={{ textTransform: "uppercase" }}>{data.file_type.name}</p>
+          {/* <span>Exp. {data.expiration_date}</span> */}
         </CardHeader>
         <CardBody>
           <ul>
@@ -39,7 +39,17 @@ function FileCard({ data, handleRemove }) {
             </li>
             <li>
               <span>Fecha de creación</span>
-              <span>{data.created_at.split("T")[0]}</span>
+              <span>
+                {new Date(data.created_at).toLocaleDateString("do-Es")}
+              </span>
+            </li>
+            <li>
+              <span>Fecha de expiración</span>
+              <span>
+                {new Date(data.expiration_date).toLocaleDateString("do-Es", {
+                  timeZone: "UTC",
+                })}
+              </span>
             </li>
             <li>
               <span>Cratedo por</span>

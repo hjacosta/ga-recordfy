@@ -8,7 +8,7 @@ function PieChart({ data }) {
   return (
     <Pie
       style={{
-        width: 100,
+        width: "100%",
       }}
       data={data}
     />
