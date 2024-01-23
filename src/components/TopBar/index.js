@@ -4,7 +4,7 @@ import { IoReturnUpBackOutline } from "react-icons/io5";
 
 import "./index.css";
 
-function TopBar({ label, button, backTo }) {
+function TopBar({ label, button, backTo, btnIcon }) {
   const navigate = useNavigate();
 
   return (
@@ -20,7 +20,11 @@ function TopBar({ label, button, backTo }) {
       </div>
 
       {button && (
-        <span onClick={button.onClick}>
+        <span
+          onClick={button.onClick}
+          style={{ display: "flex", alignItems: "center", gap: 4 }}
+        >
+          {btnIcon ? btnIcon : ""}
           {button?.label || "Nuevo expediente"}
         </span>
       )}

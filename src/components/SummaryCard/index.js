@@ -3,10 +3,24 @@ import { BsFillCheckCircleFill } from "react-icons/bs";
 import { PieChart } from "../PieChar";
 import getLabelName from "../../utils/appLabels";
 import { getCountries } from "../../utils/preData/countries";
+import { groupBy as lodashGroupBy } from "lodash";
 import "./index.css";
 
 function SummaryCard({ data }) {
   const [countries, setCountries] = React.useState([]);
+
+  const getCurrentRecordFiles = (arr) => {
+    let result = [];
+    let groupedObj = lodashGroupBy(arr, "file_type.name");
+    //console.log(groupedObj);
+    // console.log(Object.entries(groupedObj));
+    for (let i of Object.entries(groupedObj)) {
+      result.push(i[1][0]);
+    }
+
+    console.log(result);
+    return result;
+  };
 
   React.useEffect(() => {
     (async () => {
@@ -20,19 +34,22 @@ function SummaryCard({ data }) {
   );
 
   let recordFiles = data.beneficiaries.reduce(
-    (acc, item) => acc + item.record_files.length,
+    (acc, item) => acc + getCurrentRecordFiles(item.record_files).length,
     0
   );
 
-  let completedPct = (recordFiles / requiredFiles) * 100;
+  let completedPct = recordFiles; //(recordFiles / requiredFiles) * 100;
   let borderColor = recordFiles != requiredFiles ? "#3289cc" : "#fff";
 
   let chartData = {
-    labels: [],
+    labels: ["Restantes", "Subidos"],
     datasets: [
       {
-        label: " %",
-        data: [completedPct == 0 ? 0.1 : 100 - completedPct, completedPct],
+        // label: "archivos",
+        data: [
+          completedPct == 0 ? 0.1 : requiredFiles - completedPct,
+          completedPct,
+        ],
         backgroundColor: ["transparent", "#3289cc"],
         borderColor: [borderColor],
         borderWidth: 0.5,

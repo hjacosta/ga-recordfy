@@ -5,7 +5,6 @@ import { SearchBar } from "../../components/SearchBar";
 import { RecordContext } from "../../contexts/RecordContext";
 import { SummaryCard } from "../../components/SummaryCard";
 import { BsFillCloudUploadFill } from "react-icons/bs";
-import "./index.css";
 import { ListWrapper } from "../../components/ListWrapper";
 import {
   getRecordFilesApi,
@@ -23,6 +22,9 @@ import { SectionDivision } from "../../components/SectionDivision";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import getLabelName from "../../utils/appLabels";
 import { ConfirmModal } from "../../components/ConfirmModal";
+import { MdHistory } from "react-icons/md";
+import { groupBy as lodashGroupBy } from "lodash";
+import "./index.css";
 
 function RecordDetailScreen() {
   const [files, setFiles] = React.useState([]);
@@ -193,6 +195,19 @@ function RecordDetailScreen() {
     }
   };
 
+  const getCurrentRecordFiles = (arr) => {
+    let result = [];
+    let groupedObj = lodashGroupBy(arr, "file_type.name");
+    //console.log(groupedObj);
+    // console.log(Object.entries(groupedObj));
+    for (let i of Object.entries(groupedObj)) {
+      result.push(i[1][0]);
+    }
+
+    console.log(result);
+    return result;
+  };
+
   return (
     <React.Fragment>
       <TopBar
@@ -205,6 +220,7 @@ function RecordDetailScreen() {
               recordId: currentRecord.record_id,
             }),
         }}
+        btnIcon={<MdHistory size={18} />}
         // button={{ label: "Nuevo Expediente", onClick: () => console.log("hi") }}
       />
       {currentRecord && (
@@ -341,7 +357,7 @@ function RecordDetailScreen() {
               </div>
             </div>
           }
-          <SearchBar mainFilter={"name"} searchItems={[]} />
+          {/* <SearchBar mainFilter={"name"} searchItems={[]} /> */}
           {currentRecord.beneficiaries.map((beneficiary, index) => {
             return (
               <>
@@ -365,20 +381,25 @@ function RecordDetailScreen() {
                   {beneficiary.record_files?.length == 0 && (
                     <NoDataFound label={"Aún no se ha cargado nigún archivo"} />
                   )}
-                  {beneficiary.record_files?.map((file, key) => (
-                    <FileCard
-                      key={key}
-                      data={file}
-                      handleRemove={() => {
-                        setItemToDelete({
-                          fileLocation: file.source,
-                          recordFileId: file.record_file_id,
-                        });
+                  {}
+                  {getCurrentRecordFiles(beneficiary.record_files)?.map(
+                    (file, key) => {
+                      return (
+                        <FileCard
+                          key={key}
+                          data={file}
+                          handleRemove={() => {
+                            setItemToDelete({
+                              fileLocation: file.source,
+                              recordFileId: file.record_file_id,
+                            });
 
-                        setIsConfirmOpen(true);
-                      }}
-                    />
-                  ))}
+                            setIsConfirmOpen(true);
+                          }}
+                        />
+                      );
+                    }
+                  )}
                 </ListWrapper>
               </>
             );

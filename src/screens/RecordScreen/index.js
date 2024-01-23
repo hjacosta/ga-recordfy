@@ -137,11 +137,14 @@ function RecordScreen() {
     setSearchedText("");
   };
 
-  const searchedCustomers = customers.filter((customer) => {
-    const matchcase = `${customer.customer_name} ${customer.identification_number}`;
+  console.log("CUSTOMER SDFAFD", customers);
+  const searchedCustomers = customers
+    .filter((item) => Object.entries(item.record || {}).length == 0)
+    .filter((customer) => {
+      const matchcase = `${customer.customer_name} ${customer.identification_number}`;
 
-    return matchcase.toLowerCase().includes(searchedText.toLowerCase());
-  });
+      return matchcase.toLowerCase().includes(searchedText.toLowerCase());
+    });
 
   const [currentBeneficiaries, setCurrentBenficiaries] = React.useState([]);
   const [searchItems, setSearchItems] = React.useState([

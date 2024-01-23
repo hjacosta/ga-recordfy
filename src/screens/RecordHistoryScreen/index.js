@@ -1,4 +1,9 @@
 import React from "react";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { RecordContext } from "../../contexts/RecordContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { TopBar } from "../../components/TopBar";
@@ -10,6 +15,8 @@ import { ListWrapper } from "../../components/ListWrapper";
 import { NoDataFound } from "../../components/NoDataFound";
 import FileCard from "../../components/FileCard";
 import { SearchBar } from "../../components/SearchBar";
+import { removeRecordFileApi } from "../../api/recordFile";
+import { ConfirmModal } from "../../components/ConfirmModal";
 
 function RecordHistoryScreen() {
   const [files, setFiles] = React.useState([]);
@@ -23,7 +30,7 @@ function RecordHistoryScreen() {
   const [currentRecord, setCurrentRecord] = React.useState();
   const [itemToDelete, setItemToDelete] = React.useState({});
   const [searchParams, setSearchParams] = React.useState({
-    recordYear: parseInt(new Date().getFullYear()) - 1,
+    recordYear: 0,
   });
   const navigate = useNavigate();
 
@@ -69,6 +76,21 @@ function RecordHistoryScreen() {
     })();
   }, [searchParams, reqToggle, useParams().id]);
 
+  const getVisibleYears = () => {
+    let currentYear = parseInt(new Date().getFullYear());
+    let rangeLimit = currentYear - 10;
+
+    let years = [];
+
+    while (currentYear > rangeLimit) {
+      if (currentYear >= 2023) {
+        years.push(currentYear);
+      }
+      currentYear -= 1;
+    }
+    return years;
+  };
+
   const [searchItems, setSearchItems] = React.useState([
     {
       label: "Año",
@@ -77,9 +99,13 @@ function RecordHistoryScreen() {
       active: true,
       options: [
         {
-          label: "2023",
-          value: "2023",
+          label: "Todos",
+          value: 0,
         },
+        ...getVisibleYears().map((year) => ({
+          label: year,
+          value: year,
+        })),
       ],
     },
     // {
@@ -89,6 +115,18 @@ function RecordHistoryScreen() {
     //   active: false,
     // },
   ]);
+
+  const handleDelete = async (isDeletionConfirmed, params) => {
+    if (isDeletionConfirmed == true) {
+      try {
+        let res = await removeRecordFileApi(params);
+        setReqToggle(!reqToggle);
+      } catch (error) {
+        console.log(error);
+      }
+      setItemToDelete({});
+    }
+  };
 
   return (
     <div onClick={() => navigate(window.location.pathname)}>
@@ -102,7 +140,63 @@ function RecordHistoryScreen() {
         setSearchItems={setSearchItems}
         setSearchParams={setSearchParams}
       />
-      {currentRecord?.beneficiaries.map((beneficiary, index) => {
+      {getVisibleYears()
+        .filter((item) =>
+          searchParams.recordYear == 0
+            ? item == item
+            : item == searchParams.recordYear
+        )
+        .map((year, index) => (
+          <Accordion className="CustomAcordion-section">
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Typography className="CustomAcordion-section-title ">
+                {year}
+                {index == 0 ? " (Año actual)" : ""}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {currentRecord?.beneficiaries.map((beneficiary, index) => {
+                return (
+                  <>
+                    <SectionDivision
+                      title={`${beneficiary.name}  ---  ${getLabelName(
+                        beneficiary.beneficiary_type
+                      )} `}
+                      containerStyle={{}}
+                    />
+
+                    <ListWrapper>
+                      {beneficiary.record_files
+                        ?.filter(
+                          (rf) =>
+                            rf.created_at?.split("T")[0]?.split("-")[0] == year
+                        )
+                        .map((file, key) => (
+                          <FileCard
+                            key={key}
+                            data={file}
+                            handleRemove={() => {
+                              setItemToDelete({
+                                fileLocation: file.source,
+                                recordFileId: file.record_file_id,
+                              });
+
+                              setIsConfirmOpen(true);
+                            }}
+                          />
+                        ))}
+                    </ListWrapper>
+                  </>
+                );
+              })}
+            </AccordionDetails>
+          </Accordion>
+        ))}
+      {/* {currentRecord?.beneficiaries.map((beneficiary, index) => {
         return (
           <>
             <SectionDivision
@@ -136,7 +230,14 @@ function RecordHistoryScreen() {
             </ListWrapper>
           </>
         );
-      })}
+      })} */}
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        setIsOpen={setIsConfirmOpen}
+        confirmFunction={handleDelete}
+        modalType={"DELETE"}
+        deleteParams={itemToDelete}
+      />
     </div>
   );
 }
