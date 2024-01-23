@@ -64,7 +64,7 @@ function SignupScreen() {
       {isLoading && <LoadingModal height="40" width="40" color="#c3c3c3" />}
       <div className="form-container">
         <img className="logo" src={logo} alt="logo" />
-
+        <h2 style={{ textAlign: "center" }}>Crear cuenta</h2>
         <form className="login-form">
           <label className="form-label required" htmlFor="username">
             Usuario

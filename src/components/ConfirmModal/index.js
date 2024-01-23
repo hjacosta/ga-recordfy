@@ -3,7 +3,13 @@ import Modal from "@mui/material/Modal";
 import { TiWarning } from "react-icons/ti";
 import "./index.css";
 
-function ConfirmModal({ isOpen, setIsOpen, closeForm }) {
+function ConfirmModal({
+  isOpen,
+  setIsOpen,
+  confirmFunction,
+  modalType,
+  deleteParams,
+}) {
   return (
     <div>
       <Modal
@@ -27,8 +33,11 @@ function ConfirmModal({ isOpen, setIsOpen, closeForm }) {
           </div>
           <div className="ConfirmModal-body">
             <p>
-              ¿Está seguro que desea descartar este formulario? Perderá toda la
-              información ya digitada en el mismo.
+              {modalType == "FORM" &&
+                `¿Está seguro que desea descartar este formulario? Perderá toda la
+              información ya digitada en el mismo.`}
+              {modalType == "DELETE" &&
+                `¿Está seguro que desea eliminar este elemento? Esta operación es irreversible.`}
             </p>
           </div>
           <div
@@ -41,12 +50,22 @@ function ConfirmModal({ isOpen, setIsOpen, closeForm }) {
           >
             <p
               className="choice-item choice-item--yes"
-              onClick={() => {
+              onClick={async () => {
                 setIsOpen(false);
-                closeForm(true);
+                switch (modalType) {
+                  case "FORM":
+                    confirmFunction(true);
+                    break;
+                  case "DELETE":
+                    await confirmFunction(true, deleteParams);
+                    break;
+
+                  default:
+                    break;
+                }
               }}
             >
-              Si, descartar
+              Si
             </p>
             <p
               className="choice-item choice-item--no"

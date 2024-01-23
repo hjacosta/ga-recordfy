@@ -35,7 +35,15 @@ async function request({ path, method, data, customParams, isFormData }) {
           body: JSON.stringify(data),
         };
         break;
-
+      case "DELETE":
+        options = {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+        };
+        break;
       default:
         options = {
           method,

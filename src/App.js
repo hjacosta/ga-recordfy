@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthContext } from "./contexts/AuthContext";
 import { SidebarContext } from "./contexts/SidebarCtx";
-import "./App.css";
 import { SignupScreen } from "./screens/SignupScreen";
 import { LoginScreen } from "./screens/LoginScreen";
 import { HomeScreen } from "./screens/HomeScreen";
@@ -15,6 +14,8 @@ import { TopBar } from "./components/TopBar";
 import { ConfigurationScreen } from "./screens/ConfigurationScreen";
 import { NotificationContainer } from "react-notifications";
 import { ReportScreen } from "./screens/ReportScreen";
+import "./App.css";
+import RecordHistoryScreen from "./screens/RecordHistoryScreen";
 
 function App() {
   const { token } = React.useContext(AuthContext);
@@ -64,6 +65,10 @@ function App() {
               <Route path="/" element={<HomeScreen />} />
               <Route path="/records" element={<RecordScreen />} />
               <Route path="/records/:id" element={<RecordDetailScreen />} />
+              <Route
+                path="/records/:id/history"
+                element={<RecordHistoryScreen />}
+              />
               <Route path="/reports" element={<ReportScreen />} />
               <Route path="/settings" element={<ConfigurationScreen />} />
             </Routes>

@@ -104,9 +104,9 @@ function RecordScreen() {
         }
 
         setRecords(records.body);
-        const maxRecordCode = Math.max(
-          ...records.body.map((i) => i.record_code)
-        );
+        // const maxRecordCode = Math.max(
+        //   ...records.body.map((i) => i.record_code)
+        // );
 
         // recordForm.setFieldValue("recordCode", maxRecordCode + 1);
       } catch (error) {
@@ -137,11 +137,14 @@ function RecordScreen() {
     setSearchedText("");
   };
 
-  const searchedCustomers = customers.filter((customer) => {
-    const matchcase = `${customer.customer_name} ${customer.identification_number}`;
+  console.log("CUSTOMER SDFAFD", customers);
+  const searchedCustomers = customers
+    .filter((item) => Object.entries(item.record || {}).length == 0)
+    .filter((customer) => {
+      const matchcase = `${customer.customer_name} ${customer.identification_number}`;
 
-    return matchcase.toLowerCase().includes(searchedText.toLowerCase());
-  });
+      return matchcase.toLowerCase().includes(searchedText.toLowerCase());
+    });
 
   const [currentBeneficiaries, setCurrentBenficiaries] = React.useState([]);
   const [searchItems, setSearchItems] = React.useState([
@@ -665,7 +668,7 @@ function RecordScreen() {
       <Layout>
         <SearchBar
           mainLabel={"Búsqueda por nombre"}
-          mainFilter={"firstName"}
+          mainFilter={"customerName"}
           searchItems={searchItems}
           setSearchItems={setSearchItems}
           setSearchParams={setSearchParams}

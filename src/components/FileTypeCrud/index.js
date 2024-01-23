@@ -44,7 +44,7 @@ function FileTypeCrud() {
     },
     {
       name: "Creado en",
-      selector: (row) => row.created_at,
+      selector: (row) => new Date(row.created_at).toLocaleString("do-ES"),
       reorder: true,
     },
     {
@@ -54,7 +54,7 @@ function FileTypeCrud() {
     },
     {
       name: "Modificado en",
-      selector: (row) => row.last_modified_at,
+      selector: (row) => new Date(row.last_modified_at).toLocaleString("do-ES"),
       reorder: true,
     },
     {

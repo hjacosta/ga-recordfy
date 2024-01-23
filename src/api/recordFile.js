@@ -20,9 +20,9 @@ async function uploadRecordFileApi(data) {
   formData.append("name", data.filename);
   formData.append("recordId", data.recordId);
   formData.append("expirationDate", data.expirationDate);
-  formData.append("partner", data.partner);
+  formData.append("beneficiaryId", data.beneficiaryId);
   formData.append("fileTypeId", data.fileTypeId);
-  formData.append("modifiedBy", data.modifiedBy);
+  formData.append("lastModifiedBy", data.lastModifiedBy);
   formData.append("createdBy", data.createdBy);
   formData.append("identification", data.customerIdentification);
   formData.append("file", data.file);
@@ -41,4 +41,18 @@ async function uploadRecordFileApi(data) {
   }
 }
 
-export { getRecordFilesApi, uploadRecordFileApi };
+async function removeRecordFileApi(queryParams) {
+  try {
+    const deleted = await request({
+      method: "DELETE",
+      path: "/record-file",
+      customParams: queryParams,
+    });
+
+    return deleted;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export { getRecordFilesApi, uploadRecordFileApi, removeRecordFileApi };

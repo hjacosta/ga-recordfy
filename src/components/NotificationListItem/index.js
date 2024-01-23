@@ -25,7 +25,7 @@ function NotificationListItem({
     <li
       className="Notification-list-item"
       onClick={() => {
-        navigate(`/records/${data.record_code}`);
+        navigate(`/records/${data.record_id}`);
         //navigate(0);
       }}
     >
