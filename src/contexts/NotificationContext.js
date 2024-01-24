@@ -5,7 +5,7 @@ const NotificationContext = React.createContext({});
 let notificationSound = new Audio(NotifySound);
 
 // Connection opened
-const socket = new WebSocket("ws://10.1.102.31:3002");
+const socket = new WebSocket(`ws://op.grupoavant.com.do:19705`);
 socket.addEventListener("open", (event) => {
   socket.send("Connection established");
 });
@@ -20,7 +20,6 @@ function NotificationProvider({ children }) {
       //notificationSound.play();
     }
     //
-    // console.log(JSON.parse(event.data)[0]);
   });
 
   return (

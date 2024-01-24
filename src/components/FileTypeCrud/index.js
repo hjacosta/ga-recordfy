@@ -110,7 +110,6 @@ function FileTypeCrud() {
 
   React.useEffect(() => {
     (() => {
-      console.log(formVisible);
       if (formVisible == false) {
         setPreDataUpdate({});
       }
@@ -130,7 +129,6 @@ function FileTypeCrud() {
         }}
         searchButton={{
           onClick: () => {
-            console.log("hi");
             setToggleReq(!toggleReq);
           },
         }}
@@ -192,7 +190,6 @@ function FileTypeForm({
 
         await createFileTypeApi(data);
         setToggleReq((state) => !state);
-        console.log(data);
       } catch (error) {
         if (error.message.includes("jwt")) {
           logout();
@@ -222,10 +219,8 @@ function FileTypeForm({
 
         // let obj = {};
         // let keys = Object.keys(form.initialValues);
-        // //console.log(keys);
         // arr.sort().forEach((item, index) => {
         //   let [key, value] = Object.entries(item)[0];
-        //   //console.log(index + 1, key);
         //   if (keys.filter((item) => item == key).length > 0) {
         //     obj[key] = key.toLowerCase().includes("date")
         //       ? value.split("T")[0]

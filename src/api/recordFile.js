@@ -14,7 +14,6 @@ async function getRecordFilesApi(queryParams) {
 }
 
 async function uploadRecordFileApi(data) {
-  console.log(data);
   const formData = new FormData();
 
   formData.append("name", data.filename);

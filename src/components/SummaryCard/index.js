@@ -12,13 +12,9 @@ function SummaryCard({ data }) {
   const getCurrentRecordFiles = (arr) => {
     let result = [];
     let groupedObj = lodashGroupBy(arr, "file_type.name");
-    //console.log(groupedObj);
-    // console.log(Object.entries(groupedObj));
     for (let i of Object.entries(groupedObj)) {
       result.push(i[1][0]);
     }
-
-    console.log(result);
     return result;
   };
 
@@ -107,8 +103,6 @@ function SummaryCard({ data }) {
             const isUploaded = data.beneficiaries.record_files?.filter(
               (f) => f.file_type_id === ft.file_type_id
             ).length;
-
-            console.log("IS UPLOAODED", data);
 
             return (
               <li key={index}>

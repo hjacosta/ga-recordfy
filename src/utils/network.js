@@ -69,7 +69,6 @@ async function request({ path, method, data, customParams, isFormData }) {
 
     let url = `${serverURL}${path}?${queryParams}`;
 
-    // console.log("URL", url);
     const res = await fetch(url, options);
     const result = await res.json();
 

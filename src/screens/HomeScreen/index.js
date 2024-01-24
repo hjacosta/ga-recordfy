@@ -5,10 +5,7 @@ import "./index.css";
 function HomeScreen() {
   return (
     <div className="home">
-      <TopBar
-        label="Dashboard"
-        // button={{ label: "Nuevo Expediente", onClick: () => console.log("hi") }}
-      />
+      <TopBar label="Dashboard" />
     </div>
   );
 }

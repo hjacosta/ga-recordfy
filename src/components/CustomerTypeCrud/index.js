@@ -106,7 +106,6 @@ function CustomerTypeCrud() {
         }}
         searchButton={{
           onClick: () => {
-            console.log("hi");
             setToggleReq(!toggleReq);
           },
         }}
@@ -159,7 +158,6 @@ function CustomerTypeForm({ setIsLoading, setToggleReq }) {
 
         await createCustomerTypeApi(data);
         setToggleReq((state) => !state);
-        console.log(data);
       } catch (error) {
         if (error.message.includes("jwt")) {
           logout();

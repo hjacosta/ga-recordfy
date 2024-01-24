@@ -70,7 +70,6 @@ function BeneficiaryTypeFile() {
         setIsLoading(true);
         const fTypes = await await getFileTypeApi({});
         const bTypeFile = await getBeneficiaryTypeFileApi({});
-        //console.log(fTypes);
         setFileTypes(fTypes.body);
         setBeneficiaryTypeFile(bTypeFile.body);
         // setCustomerType([]);
@@ -131,8 +130,6 @@ function BeneficiaryTypeFile() {
     }
   };
 
-  console.log(beneficiaryTypeFile);
-
   return (
     <>
       <div className="BeneficiaryTypeFile-wrapper">
@@ -141,7 +138,6 @@ function BeneficiaryTypeFile() {
             {fileTypes.map((item) => (
               <li
                 onClick={() => {
-                  console.log("hi");
                   addFileType(item);
                 }}
               >

@@ -53,8 +53,6 @@ function SearchBar({
 
   React.useEffect(() => {
     const delayInput = setTimeout(() => {
-      //console.log(searchForm.values);
-
       searchForm.handleSubmit();
     }, searchTimeOut || 1000);
 

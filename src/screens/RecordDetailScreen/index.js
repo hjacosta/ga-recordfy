@@ -60,8 +60,6 @@ function RecordDetailScreen() {
     onSubmit: async (values, { resetForm }) => {
       let currentDate = new Date(values.expirationDate);
 
-      // console.log(currentDate.toISOString());
-
       // let expDate = `${currentDate.getFullYear()}-${
       //   currentDate.getMonth() + 1 <= 9
       //     ? `0${currentDate.getMonth() + 1}`
@@ -84,9 +82,6 @@ function RecordDetailScreen() {
       //     : `${currentDate.getSeconds()}`
       // }.${currentDate.getMilliseconds()}Z`;
 
-      // console.log(expDate);
-      // console.log(currentDate.toLocaleTimeString({ numeric: true }));
-      console.log();
       try {
         let data = {
           filename: `${values.prefix}-${values.filename}.${values.fileExt}`,
@@ -107,8 +102,6 @@ function RecordDetailScreen() {
         }
 
         setReqToggle(!reqToggle);
-
-        console.log(data);
       } catch (error) {
         console.log(error.message);
       }
@@ -118,12 +111,6 @@ function RecordDetailScreen() {
 
   React.useEffect(() => {
     (async () => {
-      console.log(
-        window.location.pathname?.substring(
-          window.location.pathname.lastIndexOf("/") + 1
-        )
-      );
-
       try {
         let recordId = window.location.pathname?.substring(
           window.location.pathname.lastIndexOf("/") + 1
@@ -137,7 +124,6 @@ function RecordDetailScreen() {
         setIsLoading(false);
 
         // const searchedRecords = await getRecordsApi({});
-        // console.log("RECORDS", searchedRecords);
         // if (searchedRecords.error === true) {
         //   throw new Error(searchedRecords.body);
         // }
@@ -147,8 +133,6 @@ function RecordDetailScreen() {
         //   (record) => record.record_code === recordCode
         // );
 
-        // console.log("$$$$$$", cRecord);
-
         // const recordFiles =  await getRecordFilesApi({
         //   recordId: currentRecord.record_id,
         // });
@@ -156,7 +140,6 @@ function RecordDetailScreen() {
         const recordFiles = [];
 
         const fileTypes = await getFileTypeApi({});
-        console.log("************", fileTypes);
 
         if (fileTypes.error === true) {
           throw new Error(fileTypes.body);
@@ -198,13 +181,10 @@ function RecordDetailScreen() {
   const getCurrentRecordFiles = (arr) => {
     let result = [];
     let groupedObj = lodashGroupBy(arr, "file_type.name");
-    //console.log(groupedObj);
-    // console.log(Object.entries(groupedObj));
     for (let i of Object.entries(groupedObj)) {
       result.push(i[1][0]);
     }
 
-    console.log(result);
     return result;
   };
 
@@ -221,7 +201,6 @@ function RecordDetailScreen() {
             }),
         }}
         btnIcon={<MdHistory size={18} />}
-        // button={{ label: "Nuevo Expediente", onClick: () => console.log("hi") }}
       />
       {currentRecord && (
         <Layout>
@@ -248,7 +227,6 @@ function RecordDetailScreen() {
                     type="file"
                     title="jk"
                     onChange={(e) => {
-                      console.log(e.target.files[0].type.split("/")[1]);
                       uploadForm.setFieldValue(
                         "fileExt",
                         e.target.files[0].type.split("/")[1]

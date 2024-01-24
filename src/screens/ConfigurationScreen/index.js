@@ -5,10 +5,7 @@ import { CustomAcordion } from "../../components/CustomAccordion";
 function ConfigurationScreen() {
   return (
     <div>
-      <TopBar
-        label="Configuración"
-        // button={{ label: "Nuevo Expediente", onClick: () => console.log("hi") }}
-      />
+      <TopBar label="Configuración" />
       <div>
         <CustomAcordion />
       </div>

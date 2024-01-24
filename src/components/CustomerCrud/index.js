@@ -143,13 +143,13 @@ function CustomerCrud() {
       label: "RNC o Cédula",
       name: "identificationNumber",
       type: "text",
-      active: false,
+      active: true,
     },
     {
       label: "Tipo de cliente",
       name: "customerType",
       type: "select",
-      active: false,
+      active: true,
       options: [
         {
           label: "Seleccionar tipo cliente",
@@ -198,7 +198,6 @@ function CustomerCrud() {
         }}
         searchButton={{
           onClick: () => {
-            console.log("hi");
             setToggleReq(!toggleReq);
           },
         }}
@@ -297,7 +296,6 @@ function CustomerForm({
     }),
     validateOnChange: false,
     onSubmit: async (values, { resetForm }) => {
-      console.log("holaa");
       let data = {
         ...values,
         createdBy: auth.userProfile.email,
@@ -321,7 +319,6 @@ function CustomerForm({
       }
       setIsFormOpened(false);
       setIsLoading(false);
-      console.log("hi");
       resetForm();
     },
   });
@@ -398,10 +395,8 @@ function CustomerForm({
 
         let obj = {};
         let keys = Object.keys(form.initialValues);
-        //console.log(keys);
         arr.sort().forEach((item, index) => {
           let [key, value] = Object.entries(item)[0];
-          //console.log(index + 1, key);
           if (keys.filter((item) => item == key).length > 0) {
             obj[key] = key.toLowerCase().includes("date")
               ? value.split("T")[0]
@@ -923,7 +918,6 @@ function CustomerForm({
                 type="checkbox"
                 onChange={(e) => {
                   form.setFieldValue("isPep", e.target.checked);
-                  // console.log(e.target.checked);
                 }}
               />
               <label for="isPep">Es una persona politicamente expuesta</label>

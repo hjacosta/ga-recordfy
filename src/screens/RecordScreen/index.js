@@ -52,8 +52,6 @@ function RecordScreen() {
         .max(5, "Solo se permiten 5 socios por expediente"),
     }),
     onSubmit: async (values, { resetForm }) => {
-      // console.log(auth);
-
       let data = {
         recordCode: values.recordCode,
         customerId: values.customerId,
@@ -62,8 +60,6 @@ function RecordScreen() {
         createdBy: auth.userProfile.email,
         lastModifiedBy: auth.userProfile.email,
       };
-
-      console.log(data);
 
       try {
         let res = await createRecordApi(data);
@@ -75,20 +71,14 @@ function RecordScreen() {
         resetForm();
         setRequestToggle(!requestToggle);
       } catch (error) {
-        console.log("HERE", error.message);
-
         if (error.message.includes("already exists"))
           NotificationManager.error("error", "Ya existe el expediente");
       }
     },
   });
 
-  console.log(recordForm.errors);
-
   React.useEffect(() => {
     (async () => {
-      // console.log("LARGE OF SEARCHPARAMS", Object.values(searchParams).length);
-
       try {
         // setRecords([]);
         setIsLoading(true);
@@ -96,7 +86,6 @@ function RecordScreen() {
 
         const customers = await getCustomersApi({});
         setIsLoading(false);
-        // console.log("CUSTOMERS", customers);
 
         setCustomers(customers.body);
         if (records.error === true) {
@@ -137,7 +126,6 @@ function RecordScreen() {
     setSearchedText("");
   };
 
-  console.log("CUSTOMER SDFAFD", customers);
   const searchedCustomers = customers
     .filter((item) => Object.entries(item.record || {}).length == 0)
     .filter((customer) => {
@@ -149,9 +137,10 @@ function RecordScreen() {
   const [currentBeneficiaries, setCurrentBenficiaries] = React.useState([]);
   const [searchItems, setSearchItems] = React.useState([
     {
-      label: "Cédula/Pasaporte",
+      label: "No. expediente",
       name: "identificationNumber",
       type: "text",
+      active: true,
       // options: [
       //   {
       //     label: "Activo",
@@ -180,9 +169,6 @@ function RecordScreen() {
 
     newBeneficiaries[index][prop] = value;
     newBeneficiaries[index].order = index;
-
-    console.log("HERE", value);
-    console.log(currentBeneficiaries);
     setIdentificationMask("___-_______-_");
     setCurrentBenficiaries(newBeneficiaries);
   };
@@ -349,7 +335,6 @@ function RecordScreen() {
                       type="text"
                       // value={currentBeneficiaries[index]?.name}
                       onChange={(e) => {
-                        console.log(e.target.value);
                         updateBeneficiaryField(
                           index,
                           "name",
@@ -474,7 +459,6 @@ function RecordScreen() {
                       type="text"
                       // value={currentBeneficiaries[index]?.stocksPercentage}
                       onChange={(e) => {
-                        console.log(e.target.value);
                         updateBeneficiaryField(
                           index,
                           "stocksPercentage",
@@ -499,7 +483,6 @@ function RecordScreen() {
                           "isPep",
                           Boolean(e.target.value)
                         );
-                        // console.log(e.target.checked);
                       }}
                     />
                     <label for="isPep">
@@ -517,7 +500,6 @@ function RecordScreen() {
                           "isPolitician",
                           Boolean(e.target.value)
                         );
-                        // console.log(e.target.checked);
                       }}
                     />
                     <label for="isPolitician">
@@ -536,7 +518,6 @@ function RecordScreen() {
                           "isPoliticianRelative",
                           Boolean(e.target.value)
                         );
-                        // console.log(e.target.checked);
                       }}
                     />
                     <label for="isPoliticianRelative">

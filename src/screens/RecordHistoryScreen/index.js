@@ -36,12 +36,6 @@ function RecordHistoryScreen() {
 
   React.useEffect(() => {
     (async () => {
-      console.log(
-        window.location.pathname?.substring(
-          window.location.pathname.lastIndexOf("/") + 1
-        )
-      );
-
       try {
         let recordId = window.location.pathname?.slice(
           window.location.pathname.lastIndexOf("/") - 36,
