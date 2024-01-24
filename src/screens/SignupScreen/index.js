@@ -51,7 +51,6 @@ function SignupScreen() {
         const user = await signupApi(data);
 
         setIsWelcomeVisible(true);
-        navigate("/");
         resetForm();
       } catch (error) {
         alert(error.message);
@@ -59,6 +58,10 @@ function SignupScreen() {
       setIsLoading(false);
     },
   });
+
+  const acceptEmailVerification = () => {
+    navigate("/");
+  };
 
   return (
     <>
@@ -203,7 +206,11 @@ function SignupScreen() {
           </div>
         </div>
       </div>
-      <WelcomeModal isOpen={isWelcomeVisible} setIsOpen={setIsWelcomeVisible} />
+      <WelcomeModal
+        isOpen={isWelcomeVisible}
+        setIsOpen={setIsWelcomeVisible}
+        confirmFunction={acceptEmailVerification}
+      />
     </>
   );
 }

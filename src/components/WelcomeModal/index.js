@@ -3,7 +3,7 @@ import Modal from "@mui/material/Modal";
 import { FaFireFlameCurved } from "react-icons/fa6";
 import "./index.css";
 
-function WelcomeModal({ isOpen, setIsOpen }) {
+function WelcomeModal({ isOpen, setIsOpen, confirmFunction }) {
   return (
     <div>
       <Modal
@@ -32,7 +32,7 @@ function WelcomeModal({ isOpen, setIsOpen }) {
           </div>
           <div className="WelcomeModal-body">
             <p>
-              Tu cuenta ha ya está casi lista. Vefica tu buzón de correo
+              Tu cuenta ya está casi lista. Vefica tu buzón de correo
               electrónico y completa el registro de tu cuenta.
             </p>
           </div>
@@ -48,6 +48,7 @@ function WelcomeModal({ isOpen, setIsOpen }) {
               className="choice-item choice-item--no"
               onClick={() => {
                 setIsOpen(false);
+                confirmFunction();
               }}
             >
               Entendido
