@@ -161,21 +161,21 @@ function BeneficiaryTypeFile() {
           >
             <option value="PHYSICAL_PERSON"> Persona Física</option>
             <option value="PHYSICAL_PERSON_PEP">Persona Física (Pep)</option>
-            <option value="PHYSICAL_PERSON_POLITICIAN">
+            {/* <option value="PHYSICAL_PERSON_POLITICIAN">
               Persona Física (Político)
             </option>
             <option value="PHYSICAL_PERSON_POLITICIAN_RELATIVE">
               Persona Física (Familiar hasta 3er grado de un político)
-            </option>
+            </option> */}
             <option value="LEGAL_PERSON">Persona Jurídica</option>
-            <option value="LEGAL_PERSON_PEP">Persona Jurídica (Pep)</option>
+            {/* <option value="LEGAL_PERSON_PEP">Persona Jurídica (Pep)</option>
             <option value="LEGAL_PERSON_POLITICIAN">
               {" "}
               Persona Jurídica (político)
             </option>
             <option value="LEGAL_PERSON_POLITICIAN_RELATIVE">
               Persona Jurídica (Familiar hasta 3er grado de un político)
-            </option>
+            </option> */}
           </select>
           <div className="BeneficiaryTypeFile-section-list">
             <ul>

@@ -54,33 +54,13 @@ function RecordDetailScreen() {
     validationSchema: Yup.object({
       filename: Yup.string().required("Este campo no puede estar vacio"),
       fileTypeId: Yup.string().required("Este campo no puede estar vacio"),
-      beneficiaryId: Yup.string().required("Este campo no puede estar vacio"),
+      beneficiaryId:
+        currentRecord?.customer.customer_type == "LEGAL_PERSON" &&
+        Yup.string().required("Este campo no puede estar vacio"),
       expirationDate: Yup.date().required("Este campo no puede estar vacio"),
     }),
     onSubmit: async (values, { resetForm }) => {
       let currentDate = new Date(values.expirationDate);
-
-      // let expDate = `${currentDate.getFullYear()}-${
-      //   currentDate.getMonth() + 1 <= 9
-      //     ? `0${currentDate.getMonth() + 1}`
-      //     : `${currentDate.getMonth() + 1}`
-      // }-${
-      //   currentDate.getDate() <= 9
-      //     ? `0${currentDate.getDate()}`
-      //     : `${currentDate.getDate()}`
-      // }T${
-      //   currentDate.getHours() <= 9
-      //     ? `0${currentDate.getHours()}`
-      //     : `${currentDate.getHours()}`
-      // }:${
-      //   currentDate.getMinutes() <= 9
-      //     ? `0${currentDate.getMinutes()}`
-      //     : `${currentDate.getMinutes()}`
-      // }:${
-      //   currentDate.getSeconds() <= 9
-      //     ? `0${currentDate.getSeconds()}`
-      //     : `${currentDate.getSeconds()}`
-      // }.${currentDate.getMilliseconds()}Z`;
 
       try {
         let data = {
@@ -89,7 +69,9 @@ function RecordDetailScreen() {
           customerIdentification: currentRecord.customer.identification_number,
           fileTypeId: values.fileTypeId,
           expirationDate: currentDate.toISOString("en-EN", { timeZone: "UTC" }),
-          beneficiaryId: values.beneficiaryId,
+          beneficiaryId:
+            values.beneficiaryId ||
+            currentRecord.beneficiaries[0].beneficiary_id,
           lastModifiedBy: auth.userProfile.email,
           createdBy: auth.userProfile.email,
           file: values.file,
@@ -204,7 +186,7 @@ function RecordDetailScreen() {
       />
       {currentRecord && (
         <Layout>
-          <SummaryCard data={currentRecord} />
+          <SummaryCard data={currentRecord} fileTypes={fileTypes} />
 
           {
             <div className="RecordDetail-uploader-container">
@@ -288,9 +270,19 @@ function RecordDetailScreen() {
                     </select>
                   </div>
                   <div style={{ flex: 1 }}>
-                    <span>Beneficiario</span>
+                    <span>
+                      {currentRecord.customer.customer_type == "PHYSICAL_PERSON"
+                        ? "Cliente"
+                        : "Beneficiario"}
+                    </span>
                     <select
                       value={uploadForm.values.beneficiaryId}
+                      disabled={
+                        currentRecord.customer.customer_type ==
+                        "PHYSICAL_PERSON"
+                          ? true
+                          : false
+                      }
                       onChange={(e) => {
                         uploadForm.setFieldValue(
                           "beneficiaryId",
@@ -298,9 +290,13 @@ function RecordDetailScreen() {
                         );
                       }}
                     >
-                      <option value="" disabled selected>
-                        Seleccione un beneficiario
-                      </option>
+                      {currentRecord.customer.customer_type !=
+                        "PHYSICAL_PERSON" && (
+                        <option value="" disabled selected>
+                          Seleccione un beneficiario
+                        </option>
+                      )}
+
                       {currentRecord.beneficiaries.map((opt, index) => (
                         <option key={index} value={opt.beneficiary_id}>
                           {opt.name}
@@ -350,7 +346,7 @@ function RecordDetailScreen() {
                       : ""
                   }
                    (${beneficiary.record_files.length}/${
-                    beneficiary.required_files
+                    beneficiary.required_files.length
                   })`}
                   containerStyle={{}}
                 />

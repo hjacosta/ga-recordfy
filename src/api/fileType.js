@@ -27,6 +27,20 @@ async function createFileTypeApi(data) {
   }
 }
 
+async function updateFileTypeApi(data, fileTypeId) {
+  try {
+    const fileType = await request({
+      path: `/file-type/${fileTypeId}`,
+      method: "PUT",
+      data: data,
+    });
+
+    return fileType;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 async function getCustomerFileType({ queryParams }) {
   try {
     const fileType = await request({
@@ -54,4 +68,4 @@ async function createCustomerFileType(data) {
   }
 }
 
-export { getFileTypeApi, createFileTypeApi };
+export { getFileTypeApi, createFileTypeApi, updateFileTypeApi };

@@ -4,18 +4,26 @@ import { PieChart } from "../PieChar";
 import getLabelName from "../../utils/appLabels";
 import { getCountries } from "../../utils/preData/countries";
 import { groupBy as lodashGroupBy } from "lodash";
+import { BarChart } from "../BarChart";
 import "./index.css";
 
-function SummaryCard({ data }) {
+function SummaryCard({ data, fileTypes }) {
   const [countries, setCountries] = React.useState([]);
 
-  const getCurrentRecordFiles = (arr) => {
+  const getCurrentRecordFiles = (arr, byCategory) => {
     let result = [];
     let groupedObj = lodashGroupBy(arr, "file_type.name");
+    //console.log(groupedObj);
     for (let i of Object.entries(groupedObj)) {
       result.push(i[1][0]);
     }
-    return result;
+
+    //console.log(result);
+    if (byCategory == true) {
+      return groupedObj;
+    } else {
+      return result;
+    }
   };
 
   React.useEffect(() => {
@@ -25,7 +33,7 @@ function SummaryCard({ data }) {
     })();
   }, []);
   let requiredFiles = data.beneficiaries.reduce(
-    (acc, item) => acc + item.required_files,
+    (acc, item) => acc + item.required_files.length,
     0
   );
 
@@ -33,6 +41,8 @@ function SummaryCard({ data }) {
     (acc, item) => acc + getCurrentRecordFiles(item.record_files).length,
     0
   );
+
+  // console.log(data.beneficiaries[1].record_files);
 
   let completedPct = recordFiles; //(recordFiles / requiredFiles) * 100;
   let borderColor = recordFiles != requiredFiles ? "#3289cc" : "#fff";
@@ -46,9 +56,73 @@ function SummaryCard({ data }) {
           completedPct == 0 ? 0.1 : requiredFiles - completedPct,
           completedPct,
         ],
-        backgroundColor: ["transparent", "#3289cc"],
+        backgroundColor: ["transparent", "#99bee2"],
         borderColor: [borderColor],
         borderWidth: 0.5,
+      },
+    ],
+  };
+
+  let uploadedFiles = [];
+
+  fileTypes
+    .map((item) => item.name)
+    .map((item, index) => {
+      let itemCounter = 0;
+      let foundFiles = getCurrentRecordFiles(
+        data.beneficiaries[index]?.record_files,
+        true
+      );
+      data.beneficiaries.map((b) => {
+        //console.log(b.name, item, getCurrentRecordFiles(b?.record_files, true));
+        Object.keys(getCurrentRecordFiles(b?.record_files, true)).map((key) => {
+          if (key == item) {
+            itemCounter += 1;
+          }
+        });
+      });
+
+      uploadedFiles.push(itemCounter);
+    });
+
+  let missingFiles = [];
+
+  fileTypes
+    .map((item) => item.name)
+    .map((item, index) => {
+      let itemCounter = 0;
+      let foundFiles = getCurrentRecordFiles(
+        data.beneficiaries[index]?.missing_files,
+        true
+      );
+      data.beneficiaries.map((b) => {
+        //console.log(b.name, item, getCurrentRecordFiles(b?.record_files, true));
+        Object.keys(getCurrentRecordFiles(b?.missing_files, true)).map(
+          (key) => {
+            if (key == item) {
+              itemCounter += 1;
+            }
+          }
+        );
+      });
+
+      missingFiles.push(itemCounter);
+    });
+
+  // console.log(data.beneficiaries[0].required_files);
+
+  let barChartData = {
+    labels: [...fileTypes.map((item) => item.name)],
+    datasets: [
+      {
+        label: "Subidos",
+        data: uploadedFiles,
+        backgroundColor: "#99bee2",
+      },
+      {
+        label: "Restantes",
+        data: missingFiles,
+        backgroundColor: "rgba(0,0,0,0.05)",
       },
     ],
   };
@@ -126,6 +200,9 @@ function SummaryCard({ data }) {
       </div> */}
       <div className="SummaryCard-img chart">
         <PieChart data={chartData} />
+      </div>
+      <div className="SummaryCard-img bar-chart">
+        <BarChart data={barChartData} />
       </div>
     </div>
   );

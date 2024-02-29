@@ -8,7 +8,7 @@ function ListItemCard({ data, limit }) {
   const navigate = useNavigate();
 
   let requiredFiles = data.beneficiaries.reduce(
-    (acc, item) => acc + item.required_files,
+    (acc, item) => acc + item.required_files.length,
     0
   );
 

@@ -149,7 +149,6 @@ function RecordHistoryScreen() {
             >
               <Typography className="CustomAcordion-section-title ">
                 {year}
-                {index == 0 ? " (Año actual)" : ""}
               </Typography>
             </AccordionSummary>
             <AccordionDetails>

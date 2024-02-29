@@ -1,5 +1,9 @@
 import React from "react";
-import { getFileTypeApi, createFileTypeApi } from "../../api/fileType";
+import {
+  getFileTypeApi,
+  createFileTypeApi,
+  updateFileTypeApi,
+} from "../../api/fileType";
 import { SearchBar } from "../SearchBar";
 import { CustomDatatable } from "../CustomDatatable";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -10,6 +14,9 @@ import { useFormik } from "formik";
 import { DTOptionsMenu } from "../DTOptionsMenu";
 import * as Yup from "yup";
 import { InputMask } from "@react-input/mask";
+import { snakeToCamel } from "../../utils/stringFunctions";
+import { isEqual } from "lodash";
+import "./index.css";
 
 function FileTypeCrud() {
   const { logout } = React.useContext(AuthContext);
@@ -72,7 +79,8 @@ function FileTypeCrud() {
 
   const fileTypeColumns = [
     {
-      name: "Descripción",
+      name: "Tipo de archivo",
+      width: "200px",
       selector: (row) => row.name,
       reorder: true,
     },
@@ -165,6 +173,8 @@ function FileTypeForm({
   setPreDataUpdate,
 }) {
   const { auth, logout } = React.useContext(AuthContext);
+  const [isSaveBtnDisabled, setIsSaveBtnDisabled] = React.useState(false);
+  const [lastFormValue, setLastFormValue] = React.useState({});
   const navigate = useNavigate();
 
   const fileTypeForm = useFormik({
@@ -187,8 +197,11 @@ function FileTypeForm({
 
       try {
         setIsLoading(true);
-
-        await createFileTypeApi(data);
+        if (Object.entries(preDataUpdate).length > 0) {
+          await updateFileTypeApi(data, preDataUpdate.file_type_id);
+        } else {
+          await createFileTypeApi(data);
+        }
         setToggleReq((state) => !state);
       } catch (error) {
         if (error.message.includes("jwt")) {
@@ -209,41 +222,53 @@ function FileTypeForm({
       if (Object.entries(preDataUpdate).length > 0) {
         fileTypeForm.setFieldValue("name", preDataUpdate.name);
         fileTypeForm.setFieldValue("prefix", preDataUpdate.prefix);
-        // let arr = Object.entries(preDataUpdate).map((item) => {
-        //   let key = snakeToCamel(item[0]);
+        let arr = Object.entries(preDataUpdate).map((item) => {
+          let key = snakeToCamel(item[0]);
 
-        //   return {
-        //     [key]: item[1],
-        //   };
-        // });
+          return {
+            [key]: item[1],
+          };
+        });
 
-        // let obj = {};
-        // let keys = Object.keys(form.initialValues);
-        // arr.sort().forEach((item, index) => {
-        //   let [key, value] = Object.entries(item)[0];
-        //   if (keys.filter((item) => item == key).length > 0) {
-        //     obj[key] = key.toLowerCase().includes("date")
-        //       ? value.split("T")[0]
-        //       : value;
-        //   }
-        // });
+        let obj = {};
+        let keys = Object.keys(fileTypeForm.initialValues);
+        arr.sort().forEach((item, index) => {
+          let [key, value] = Object.entries(item)[0];
+          if (keys.filter((item) => item == key).length > 0) {
+            obj[key] = key.toLowerCase().includes("date")
+              ? value.split("T")[0]
+              : value;
+          }
+        });
 
-        // setLastFormValue(obj);
-        // setIsSaveBtnDisabled(true);
+        setLastFormValue(obj);
+        setIsSaveBtnDisabled(true);
       } else {
         fileTypeForm.resetForm();
       }
     })();
   }, [preDataUpdate]);
 
+  React.useEffect(() => {
+    (() => {
+      if (isEqual(lastFormValue, fileTypeForm.values)) {
+        setIsSaveBtnDisabled(true);
+      } else {
+        setIsSaveBtnDisabled(false);
+      }
+    })();
+  }, [fileTypeForm.values]);
+
   let userFields = [
     {
-      label: "Descripcion",
+      label: "Tipo de archivo (Cedula, pasaporte, etc...)",
+      placeholder: "Ej. Cedula",
       field: "name",
       type: "input",
     },
     {
-      label: "Prefijo",
+      label: "Prefijo (Ej. CED-nombre-archivo)",
+      placeholder: "Ej. CED",
       field: "prefix",
       type: "input",
     },
@@ -269,7 +294,7 @@ function FileTypeForm({
             <div style={{ display: "flex", flexDirection: "column" }}>
               <input
                 className="search-bar-input"
-                placeholder={item.label}
+                placeholder={item.placeholder}
                 value={fileTypeForm.values[item.field]}
                 onChange={(e) =>
                   fileTypeForm.setFieldValue(item.field, e.target.value)
@@ -289,14 +314,29 @@ function FileTypeForm({
             </div>
           </div>
         ))}
-        <div className="search-bar-group">
+        <div className="FileTypeForm-footer">
           <button
             type="button"
-            className="search-bar-input"
+            className={`${isSaveBtnDisabled ? "disabled" : "selected"} `}
+            disabled={isSaveBtnDisabled}
             onClick={fileTypeForm.handleSubmit}
           >
             Guardar
           </button>
+          {isSaveBtnDisabled && (
+            <button
+              type="button"
+              className={"discard"}
+              onClick={() => {
+                fileTypeForm.setFieldValue("name", "");
+                fileTypeForm.setFieldValue("prefix", "");
+                setIsSaveBtnDisabled(false);
+                setPreDataUpdate({});
+              }}
+            >
+              Descartar
+            </button>
+          )}
         </div>
       </div>
     </>

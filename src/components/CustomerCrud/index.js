@@ -242,6 +242,7 @@ function CustomerForm({
   const [cities, setCities] = React.useState([]);
   const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
   const [isSaveBtnDisabled, setIsSaveBtnDisabled] = React.useState(false);
+  const [onSaveOpenNew, setOnSaveOpenNew] = React.useState(false);
   // const [discardConfirmed, setDiscardConfirmed] = React.useState(false);
 
   const form = useFormik({
@@ -317,7 +318,10 @@ function CustomerForm({
         }
         console.log(error);
       }
-      setIsFormOpened(false);
+
+      if (onSaveOpenNew == false) {
+        setIsFormOpened(false);
+      }
       setIsLoading(false);
       resetForm();
     },
@@ -741,10 +745,8 @@ function CustomerForm({
                   </select>
                 </div>
                 <div>
-                  <span>Tipo de actividad</span>
+                  <span>Ocupación</span>
                   <select
-                    // multiple
-
                     value={form.values.commercialActivityType}
                     onChange={(e) =>
                       form.setFieldValue(
@@ -755,6 +757,8 @@ function CustomerForm({
                   >
                     <option value="PRIVATE">Empleado privado</option>
                     <option value="PUBLIC">Empleado público</option>
+                    <option value="UNEMPLOYED">Desempleado</option>
+                    <option value="STUDENT">Estudiante</option>
                     <option value="BUSINESS_OWNER">Negocio propio</option>
                     <option value="COMPANY_PARTNER">
                       Socio de sociedad mercantil
@@ -774,6 +778,7 @@ function CustomerForm({
                   >
                     <option value="PRIVATE">Privado</option>
                     <option value="PUBLIC">Público</option>
+                    <option value="BOTH">Público/Privado</option>
                   </select>
                 </div>
                 <div>
@@ -906,51 +911,73 @@ function CustomerForm({
               </div>
             </>
           )}
-          <SectionDivision
-            title={"Otras informaciones Relevantes"}
-            icon={<FaInfoCircle color="grey" size={14} />}
-          />
-          <div className="CustomerForm-group--pep">
-            <div>
-              <input
-                id="isPep"
-                value={form.values.isPep}
-                type="checkbox"
-                onChange={(e) => {
-                  form.setFieldValue("isPep", e.target.checked);
-                }}
+
+          {form.values.customerType === "PHYSICAL_PERSON" && (
+            <>
+              <SectionDivision
+                title={"Otras informaciones Relevantes"}
+                icon={<FaInfoCircle color="grey" size={14} />}
               />
-              <label for="isPep">Es una persona politicamente expuesta</label>
-            </div>
-            <div>
-              <input
-                id="isPolitician"
-                value={form.values.isPolitician}
-                type="checkbox"
-                onChange={(e) =>
-                  form.setFieldValue("isPolitician", e.target.checked)
-                }
-              />
-              <label for="isPolitician">
-                ¿Ha ocupado alguna posición como funcionario público o dirigente
-                político en lo último 5 años?
-              </label>
-            </div>
-            <div>
-              <input
-                id="isPoliticianRelative"
-                value={form.values.isPoliticianRelative}
-                type="checkbox"
-                onChange={(e) =>
-                  form.setFieldValue("isPoliticianRelative", e.target.checked)
-                }
-              />
-              <label for="isPoliticianRelative">
-                ¿Es algún miembro de su familia nuclear o familiar hasta el
-                tercer grado servidor público en el estado dominicano?
-              </label>
-            </div>
-          </div>
+              <div className="CustomerForm-group--pep">
+                <div>
+                  <input
+                    id="isPep"
+                    value={form.values.isPep}
+                    checked={form.values.isPep}
+                    type="checkbox"
+                    onChange={(e) => {
+                      form.setFieldValue("isPep", e.target.checked);
+                      if (e.target.checked) {
+                        form.setFieldValue("riskLevel", "HIGH");
+                      }
+                    }}
+                  />
+                  <label for="isPep">
+                    Es una persona politicamente expuesta
+                  </label>
+                </div>
+                <div>
+                  <input
+                    id="isPolitician"
+                    value={form.values.isPolitician}
+                    type="checkbox"
+                    onChange={(e) => {
+                      form.setFieldValue("isPep", true);
+                      form.setFieldValue("isPolitician", e.target.checked);
+
+                      if (e.target.checked) {
+                        form.setFieldValue("riskLevel", "HIGH");
+                      }
+                    }}
+                  />
+                  <label for="isPolitician">
+                    ¿Ha ocupado alguna posición como funcionario público o
+                    dirigente político en lo último 5 años?
+                  </label>
+                </div>
+                <div>
+                  <input
+                    id="isPoliticianRelative"
+                    value={form.values.isPoliticianRelative}
+                    type="checkbox"
+                    onChange={(e) => {
+                      form.setFieldValue(
+                        "isPoliticianRelative",
+                        e.target.checked
+                      );
+                      if (e.target.checked) {
+                        form.setFieldValue("riskLevel", "HIGH");
+                      }
+                    }}
+                  />
+                  <label for="isPoliticianRelative">
+                    ¿Es algún miembro de su familia nuclear o familiar hasta el
+                    tercer grado servidor público en el estado dominicano?
+                  </label>
+                </div>
+              </div>
+            </>
+          )}
 
           <SectionDivision
             title={"Nivel de Riesgo"}
@@ -988,7 +1015,13 @@ function CustomerForm({
                 padding: "0 12px",
               }}
             >
-              <input id="openNew" name="openNew" type="checkbox" />
+              <input
+                id="openNew"
+                name="openNew"
+                type="checkbox"
+                value={onSaveOpenNew}
+                onChange={(e) => setOnSaveOpenNew(e.target.checked)}
+              />
               <label for="openNew">Al guardar, abrir uno nuevo</label>
             </div>
             <button

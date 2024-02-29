@@ -4,11 +4,12 @@ import { Pie } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-function PieChart({ data }) {
+function PieChart({ data, width }) {
   return (
     <Pie
       style={{
-        width: "100%",
+        width: width || "100%",
+        height: "100%",
       }}
       data={data}
     />

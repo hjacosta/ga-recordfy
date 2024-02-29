@@ -50,7 +50,7 @@ function FileCard({ data, handleRemove }) {
               </span>
             </li>
             <li>
-              <span>Cratedo por</span>
+              <span>Creado por</span>
               <span>{data.created_by}</span>
             </li>
           </ul>

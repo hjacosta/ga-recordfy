@@ -65,7 +65,7 @@ function ConfirmModal({
                 }
               }}
             >
-              Si
+              {modalType == "FORM" ? "Si, Descartar" : "Si"}
             </p>
             <p
               className="choice-item choice-item--no"
@@ -73,7 +73,7 @@ function ConfirmModal({
                 setIsOpen(false);
               }}
             >
-              No
+              {modalType == "FORM" ? "Continuar editando" : "Cancelar"}
             </p>
           </div>
         </div>

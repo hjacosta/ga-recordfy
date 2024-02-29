@@ -70,7 +70,7 @@ function CustomAcordion() {
           id="panel1a-header"
         >
           <Typography className="CustomAcordion-section-title ">
-            Archivos por tipos de beneficiarios
+            Archivos por tipos de clientes o beneficiarios
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
