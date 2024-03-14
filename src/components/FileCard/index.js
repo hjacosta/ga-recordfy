@@ -38,8 +38,14 @@ function FileCard({ data, handleRemove }) {
               <span>{data.name}</span>
             </li>
             <li>
-              <span>Fecha de creación</span>
+              <span>Subido en</span>
               <span>{new Date(data.created_at).toLocaleString("do-Es")}</span>
+            </li>
+            <li>
+              <span>Fecha de creación</span>
+              <span>
+                {new Date(data.doc_creation_date).toLocaleDateString("do-Es")}
+              </span>
             </li>
             <li>
               <span>Fecha de expiración</span>

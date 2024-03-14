@@ -23,7 +23,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import getLabelName from "../../utils/appLabels";
 import { ConfirmModal } from "../../components/ConfirmModal";
 import { MdHistory } from "react-icons/md";
-import { groupBy as lodashGroupBy } from "lodash";
+import { groupBy as lodashGroupBy, orderBy } from "lodash";
 import "./index.css";
 
 function RecordDetailScreen() {
@@ -47,6 +47,7 @@ function RecordDetailScreen() {
       fileExt: "",
       fileTypeId: "all",
       expirationDate: "",
+      docCreationDate: "",
       file: "",
       beneficiaryId: "",
     },
@@ -58,8 +59,10 @@ function RecordDetailScreen() {
         currentRecord?.customer.customer_type == "LEGAL_PERSON" &&
         Yup.string().required("Este campo no puede estar vacio"),
       expirationDate: Yup.date().required("Este campo no puede estar vacio"),
+      docCreationDate: Yup.date().required("Este campo no puede estar vacio"),
     }),
     onSubmit: async (values, { resetForm }) => {
+      let docDate = new Date(values.docCreationDate);
       let currentDate = new Date(values.expirationDate);
 
       try {
@@ -69,6 +72,7 @@ function RecordDetailScreen() {
           customerIdentification: currentRecord.customer.identification_number,
           fileTypeId: values.fileTypeId,
           expirationDate: currentDate.toISOString("en-EN", { timeZone: "UTC" }),
+          docCreationDate: docDate.toISOString("en-EN", { timeZone: "UTC" }),
           beneficiaryId:
             values.beneficiaryId ||
             currentRecord.beneficiaries[0].beneficiary_id,
@@ -297,7 +301,11 @@ function RecordDetailScreen() {
                         </option>
                       )}
 
-                      {currentRecord.beneficiaries.map((opt, index) => (
+                      {orderBy(
+                        currentRecord.beneficiaries,
+                        ["order"],
+                        "desc"
+                      ).map((opt, index) => (
                         <option key={index} value={opt.beneficiary_id}>
                           {opt.name}
                         </option>
@@ -327,18 +335,40 @@ function RecordDetailScreen() {
                     {uploadForm.errors.expirationDate}
                   </p>
                 </div>
+
+                <span>
+                  Fecha de creación ( fecha en que fue emitido el documento )
+                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <input
+                    type="date"
+                    placeholder="Nombre del archivo"
+                    value={`${uploadForm.values.docCreationDate}`}
+                    onChange={(e) =>
+                      uploadForm.setFieldValue(
+                        "docCreationDate",
+                        `${e.target.value}`
+                      )
+                    }
+                    // disabled
+                  />
+                  <p className="RecordDetail-form-error">
+                    {uploadForm.errors.docCreationDate}
+                  </p>
+                </div>
                 <button onClick={uploadForm.handleSubmit}>Subir archivo</button>
               </div>
             </div>
           }
           {/* <SearchBar mainFilter={"name"} searchItems={[]} /> */}
-          {currentRecord.beneficiaries.map((beneficiary, index) => {
-            return (
-              <>
-                <SectionDivision
-                  title={`${beneficiary.name}  ---  ${getLabelName(
-                    beneficiary.beneficiary_type
-                  )} ${beneficiary.is_pep == true ? "| Pep " : ""}
+          {orderBy(currentRecord.beneficiaries, ["order"], "desc").map(
+            (beneficiary, index) => {
+              return (
+                <>
+                  <SectionDivision
+                    title={`${beneficiary.name}  ---  ${getLabelName(
+                      beneficiary.beneficiary_type
+                    )} ${beneficiary.is_pep == true ? "| Pep " : ""}
                   ${beneficiary.is_politician == true ? "| Politico " : ""}
                   ${
                     beneficiary.is_politician_relative == true
@@ -346,38 +376,41 @@ function RecordDetailScreen() {
                       : ""
                   }
                    (${beneficiary.record_files.length}/${
-                    beneficiary.required_files.length
-                  })`}
-                  containerStyle={{}}
-                />
+                      beneficiary.required_files.length
+                    })`}
+                    containerStyle={{}}
+                  />
 
-                <ListWrapper>
-                  {beneficiary.record_files?.length == 0 && (
-                    <NoDataFound label={"Aún no se ha cargado nigún archivo"} />
-                  )}
-                  {}
-                  {getCurrentRecordFiles(beneficiary.record_files)?.map(
-                    (file, key) => {
-                      return (
-                        <FileCard
-                          key={key}
-                          data={file}
-                          handleRemove={() => {
-                            setItemToDelete({
-                              fileLocation: file.source,
-                              recordFileId: file.record_file_id,
-                            });
+                  <ListWrapper>
+                    {beneficiary.record_files?.length == 0 && (
+                      <NoDataFound
+                        label={"Aún no se ha cargado nigún archivo"}
+                      />
+                    )}
+                    {}
+                    {getCurrentRecordFiles(beneficiary.record_files)?.map(
+                      (file, key) => {
+                        return (
+                          <FileCard
+                            key={key}
+                            data={file}
+                            handleRemove={() => {
+                              setItemToDelete({
+                                fileLocation: file.source,
+                                recordFileId: file.record_file_id,
+                              });
 
-                            setIsConfirmOpen(true);
-                          }}
-                        />
-                      );
-                    }
-                  )}
-                </ListWrapper>
-              </>
-            );
-          })}
+                              setIsConfirmOpen(true);
+                            }}
+                          />
+                        );
+                      }
+                    )}
+                  </ListWrapper>
+                </>
+              );
+            }
+          )}
         </Layout>
       )}
       <ConfirmModal

@@ -19,6 +19,7 @@ async function uploadRecordFileApi(data) {
   formData.append("name", data.filename);
   formData.append("recordId", data.recordId);
   formData.append("expirationDate", data.expirationDate);
+  formData.append("docCreationDate", data.docCreationDate);
   formData.append("beneficiaryId", data.beneficiaryId);
   formData.append("fileTypeId", data.fileTypeId);
   formData.append("lastModifiedBy", data.lastModifiedBy);
