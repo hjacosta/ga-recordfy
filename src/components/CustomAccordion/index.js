@@ -77,6 +77,21 @@ function CustomAcordion() {
           <BeneficiaryTypeFile />
         </AccordionDetails>
       </Accordion>
+
+      <SectionDivision title={"Usuarios"} />
+
+      <Accordion className="CustomAcordion-section">
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          <Typography className="CustomAcordion-section-title ">
+            Usuarios
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>{/* <CustomerCrud /> */}</AccordionDetails>
+      </Accordion>
     </div>
   );
 }

@@ -6,7 +6,8 @@ let notificationSound = new Audio(NotifySound);
 
 // Connection opened
 //ws://op.grupoavant.com.do:19705
-const socket = new WebSocket(`ws://172.16.0.212:3002`);
+//ws://172.16.0.212:3002
+const socket = new WebSocket(`ws://op.grupoavant.com.do:19705`);
 socket.addEventListener("open", (event) => {
   socket.send("Connection established");
 });

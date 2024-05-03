@@ -59,7 +59,14 @@ function DTOptionsMenu(props) {
           <HiEye />
           &nbsp;<p>Ver</p>
         </MenuItem>
-        <MenuItem className="MenuItem" disabled onClick={handleClose}>
+        <MenuItem
+          className="MenuItem"
+          onClick={async () => {
+            props.setCurrentItem(props.row);
+            await props.setConfirmDeletion(true);
+            handleClose();
+          }}
+        >
           <HiTrash />
           &nbsp; <p>Eliminar</p>
         </MenuItem>

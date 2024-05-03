@@ -27,4 +27,22 @@ async function createBeneficiaryTypeFileApi(data) {
   }
 }
 
-export { getBeneficiaryTypeFileApi, createBeneficiaryTypeFileApi };
+async function removeBeneficiaryTypeFileApi(data) {
+  try {
+    const bFileType = await request({
+      path: `/beneficiary-type-file/${data.beneficiary_type_file_id}`,
+      method: "DELETE",
+      data: data,
+    });
+
+    return bFileType;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export {
+  getBeneficiaryTypeFileApi,
+  createBeneficiaryTypeFileApi,
+  removeBeneficiaryTypeFileApi,
+};

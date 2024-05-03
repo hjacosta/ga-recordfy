@@ -7,7 +7,7 @@ import { NavLink } from "react-router-dom";
 
 function FileCard({ data, handleRemove }) {
   return (
-    <Card>
+    <div id={data.record_file_id} className="Card">
       <FaTimesCircle
         onClick={(e) => {
           handleRemove();
@@ -62,7 +62,7 @@ function FileCard({ data, handleRemove }) {
           </ul>
         </CardBody>
       </NavLink>
-    </Card>
+    </div>
   );
 }
 

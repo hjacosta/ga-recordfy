@@ -15,7 +15,10 @@ import "./index.css";
 import {
   createBeneficiaryTypeFileApi,
   getBeneficiaryTypeFileApi,
+  removeBeneficiaryTypeFileApi,
 } from "../../api/beneficiaryTypeFile";
+import { ConfirmModal } from "../ConfirmModal";
+import { ErrorModal } from "../ErrorModal";
 
 function BeneficiaryTypeFile() {
   const generalColumns = [
@@ -42,6 +45,10 @@ function BeneficiaryTypeFile() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [toggleReq, setToggleReq] = React.useState(false);
   const [formVisible, setFormVisible] = React.useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
+  const [toDeleteItem, setToDeleteItem] = React.useState({});
+  const [isError, setIsError] = React.useState(false);
+  const [errorBody, setErrorBody] = React.useState({});
   const { logout } = React.useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -114,6 +121,29 @@ function BeneficiaryTypeFile() {
     }
   };
 
+  const removeFileType = async (id) => {
+    let targetItem = beneficiaryTypeFile.filter(
+      (item) =>
+        item.beneficiary_type == beneficiaryType && item.file_type_id == id
+    )[0];
+
+    let res = await removeBeneficiaryTypeFileApi(targetItem);
+    if (res.error == true) {
+      setErrorBody(JSON.parse(res.body));
+      setIsError(true);
+    } else {
+      setToggleReq(!toggleReq);
+    }
+  };
+
+  const undoSelect = (ft) => {
+    setSelectedBeneficiaries(
+      selectedBeneficiaries.filter(
+        (item) => item.file_type_id != ft.file_type_id
+      )
+    );
+  };
+
   const saveForm = async () => {
     try {
       let res = await createBeneficiaryTypeFileApi({
@@ -179,13 +209,35 @@ function BeneficiaryTypeFile() {
           </select>
           <div className="BeneficiaryTypeFile-section-list">
             <ul>
-              {[...beneficiaryTypeFile, ...selectedBeneficiaries]
+              {[...beneficiaryTypeFile]
                 .filter((ft) => ft.beneficiary_type == beneficiaryType)
-                .map((ft) => (
-                  <li>
+                .map((ft, index) => (
+                  <li key={index}>
                     <p>{ft.name || ft.file_type?.name}</p>
                     <IoClose
-                      title="Añadir"
+                      onClick={() => {
+                        setToDeleteItem(ft);
+                        setIsConfirmOpen(true);
+                      }}
+                      title="Eliminar"
+                      size={14}
+                      color=""
+                      style={{ cursor: "pointer" }}
+                    />
+                  </li>
+                ))}
+
+              {[...selectedBeneficiaries]
+                .filter((ft) => ft.beneficiary_type == beneficiaryType)
+                .map((ft, index) => (
+                  <li
+                    key={index}
+                    className="selected"
+                    onClick={() => undoSelect(ft)}
+                  >
+                    <p>{ft.name || ft.file_type?.name}</p>
+                    <IoClose
+                      title="Eliminar"
                       size={14}
                       color=""
                       style={{ cursor: "pointer" }}
@@ -199,6 +251,45 @@ function BeneficiaryTypeFile() {
       <div className="BeneficiaryTypeFile-footer">
         <button onClick={async () => await saveForm()}>Guardar</button>
       </div>
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        setIsOpen={setIsConfirmOpen}
+        modalType={"DELETE"}
+        confirmFunction={async () =>
+          await removeFileType(toDeleteItem.file_type_id)
+        }
+      />
+      <ErrorModal
+        isOpen={isError}
+        setIsOpen={setIsError}
+        errorBody={
+          <>
+            {
+              <div style={{ fontSize: 16 }}>
+                <p>{errorBody.msg}</p>
+                <ul
+                  style={{ listStyle: "none", marginLeft: 0, paddingLeft: 0 }}
+                >
+                  {errorBody?.detail?.map((item) => (
+                    <li style={{ fontSize: 14 }}>
+                      - &nbsp;
+                      <a
+                        style={{ textDecoration: "none" }}
+                        href={`/records/${item.beneficiary.record_id}#${item.record_file_id}`}
+                      >
+                        {item.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            }
+          </>
+        }
+        onClose={() => {
+          setErrorBody({});
+        }}
+      />
     </>
   );
 }

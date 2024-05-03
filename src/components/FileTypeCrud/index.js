@@ -3,6 +3,7 @@ import {
   getFileTypeApi,
   createFileTypeApi,
   updateFileTypeApi,
+  removeFileTypeApi,
 } from "../../api/fileType";
 import { SearchBar } from "../SearchBar";
 import { CustomDatatable } from "../CustomDatatable";
@@ -16,6 +17,8 @@ import * as Yup from "yup";
 import { InputMask } from "@react-input/mask";
 import { snakeToCamel } from "../../utils/stringFunctions";
 import { isEqual } from "lodash";
+import { ConfirmModal } from "../ConfirmModal";
+import { ErrorModal } from "../ErrorModal";
 import "./index.css";
 
 function FileTypeCrud() {
@@ -25,6 +28,9 @@ function FileTypeCrud() {
   const [toggleReq, setToggleReq] = React.useState(false);
   const [formVisible, setFormVisible] = React.useState(false);
   const [preDataUpdate, setPreDataUpdate] = React.useState({});
+  const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
+  const [errorBody, setErrorBody] = React.useState({});
   const navigate = useNavigate();
 
   const [searchParams, setSearchParams] = React.useState({});
@@ -71,6 +77,7 @@ function FileTypeCrud() {
           row={row}
           setCurrentItem={setPreDataUpdate}
           setFormVisible={setFormVisible}
+          setConfirmDeletion={setIsConfirmOpen}
         />
       ),
       reorder: false,
@@ -161,6 +168,50 @@ function FileTypeCrud() {
         columns={fileTypeColumns}
         data={fileType}
         isLoading={isLoading}
+      />
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        setIsOpen={setIsConfirmOpen}
+        modalType={"DELETE"}
+        confirmFunction={async () => {
+          let res = await removeFileTypeApi(preDataUpdate.file_type_id);
+          if (res.error == true) {
+            setErrorBody(JSON.parse(res.body));
+            setIsError(true);
+          }
+          setToggleReq(!toggleReq);
+        }}
+      />
+      <ErrorModal
+        isOpen={isError}
+        setIsOpen={setIsError}
+        errorBody={
+          <>
+            {
+              <div style={{ fontSize: 16 }}>
+                <p>{errorBody.msg}</p>
+                <ul
+                  style={{ listStyle: "none", marginLeft: 0, paddingLeft: 0 }}
+                >
+                  {errorBody?.detail?.map((item) => (
+                    <li style={{ fontSize: 14 }}>
+                      - &nbsp;
+                      <a
+                        style={{ textDecoration: "none" }}
+                        href={`/records/${item.beneficiary.record_id}#${item.record_file_id}`}
+                      >
+                        {item.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            }
+          </>
+        }
+        onClose={() => {
+          setErrorBody({});
+        }}
       />
     </>
   );

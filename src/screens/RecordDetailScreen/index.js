@@ -190,7 +190,11 @@ function RecordDetailScreen() {
       />
       {currentRecord && (
         <Layout>
-          <SummaryCard data={currentRecord} fileTypes={fileTypes} />
+          <SummaryCard
+            data={currentRecord}
+            fileTypes={fileTypes}
+            riskLevel={currentRecord.customer.risk_level}
+          />
 
           {
             <div className="RecordDetail-uploader-container">
@@ -419,6 +423,7 @@ function RecordDetailScreen() {
         confirmFunction={handleDelete}
         modalType={"DELETE"}
         deleteParams={itemToDelete}
+        elementLabel={"archivo"}
       />
     </React.Fragment>
   );

@@ -9,6 +9,8 @@ function ConfirmModal({
   confirmFunction,
   modalType,
   deleteParams,
+  modalMessage,
+  elementLabel,
 }) {
   return (
     <div>
@@ -34,10 +36,14 @@ function ConfirmModal({
           <div className="ConfirmModal-body">
             <p>
               {modalType == "FORM" &&
+                !modalMessage &&
                 `¿Está seguro que desea descartar este formulario? Perderá toda la
               información ya digitada en el mismo.`}
               {modalType == "DELETE" &&
-                `¿Está seguro que desea eliminar este elemento? Esta operación es irreversible.`}
+                !modalMessage &&
+                `¿Está seguro que desea eliminar este ${
+                  elementLabel || "elemento"
+                }? Esta operación es irreversible.`}
             </p>
           </div>
           <div

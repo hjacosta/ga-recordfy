@@ -67,6 +67,8 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  overflow-y: auto;
+  max-height: 210px;
 }
 
 .BeneficiaryTypeFile-section ul li,
@@ -80,4 +82,9 @@
   justify-content: space-between;
   padding: 0 12px;
   border-radius: 2px;
+}
+
+.BeneficiaryTypeFile-section ul li.selected {
+  background-color: #81b8d8;
+  font-weight: 500;
 }

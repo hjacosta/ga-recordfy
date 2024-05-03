@@ -41,6 +41,20 @@ async function updateFileTypeApi(data, fileTypeId) {
   }
 }
 
+async function removeFileTypeApi(id) {
+  try {
+    const fileType = await request({
+      path: `/file-type/${id}`,
+      method: "DELETE",
+    });
+    console.log(JSON.parse(fileType.body));
+    return fileType;
+  } catch (error) {
+    console.log(error);
+    throw new Error(error);
+  }
+}
+
 async function getCustomerFileType({ queryParams }) {
   try {
     const fileType = await request({
@@ -68,4 +82,9 @@ async function createCustomerFileType(data) {
   }
 }
 
-export { getFileTypeApi, createFileTypeApi, updateFileTypeApi };
+export {
+  getFileTypeApi,
+  createFileTypeApi,
+  updateFileTypeApi,
+  removeFileTypeApi,
+};

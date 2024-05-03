@@ -1,4 +1,4 @@
-.ConfirmModal {
+.ErrorModal {
   position: absolute;
   box-sizing: border-box;
   top: 50%;
@@ -14,33 +14,34 @@
   border-radius: 8px;
   padding: 24px;
 }
-.ConfirmModal:focus,
-.ConfirmModal:focus-visible {
+
+.ErrorModal:focus,
+.ErrorModal:focus-visible {
   border: none;
   outline: none;
 }
-.ConfirmModal:active {
+.ErrorModal:active {
   border: none;
 }
 
-.ConfirmModal h3 {
+.ErrorModal h3 {
   margin: 0;
   font-size: 22px;
   color: #333333;
 }
 
-.ConfirmModal-header {
+.ErrorModal-header {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.ConfirmModal-body {
+.ErrorModal-body {
   font-weight: 400;
   font-size: 16px;
 }
 
-.ConfirmModal .choice-item {
+.ErrorModal .choice-item {
   font-size: 14px;
   text-transform: uppercase;
   font-weight: 500;
@@ -48,16 +49,16 @@
   margin: 0;
 }
 
-.ConfirmModal .choice-item--no {
+.ErrorModal .choice-item--no {
   color: rgb(16, 127, 255);
 }
 
-.ConfirmModal .choice-item--yes {
+.ErrorModal .choice-item--yes {
   color: rgb(180, 30, 42);
 }
 
 @media screen and (max-width: 768px) {
-  .ConfirmModal {
+  .ErrorModal {
     width: 100%;
   }
 }

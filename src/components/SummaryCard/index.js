@@ -5,9 +5,10 @@ import getLabelName from "../../utils/appLabels";
 import { getCountries } from "../../utils/preData/countries";
 import { groupBy as lodashGroupBy } from "lodash";
 import { BarChart } from "../BarChart";
+import { getRiskLevelTag } from "../../utils/records";
 import "./index.css";
 
-function SummaryCard({ data, fileTypes }) {
+function SummaryCard({ data, fileTypes, riskLevel }) {
   const [countries, setCountries] = React.useState([]);
 
   const getCurrentRecordFiles = (arr, byCategory) => {
@@ -130,7 +131,17 @@ function SummaryCard({ data, fileTypes }) {
   return (
     <div className="SummaryCard">
       <div className="SummaryCard-content">
-        <h1>Resumen</h1>
+        <div>
+          <h1 style={{ display: "inline-block" }}>Resumen</h1>
+          <span
+            className="SummaryCard-risktag"
+            style={{
+              backgroundColor: getRiskLevelTag(riskLevel).color,
+            }}
+          >
+            RIESGO {getRiskLevelTag(riskLevel).label}
+          </span>
+        </div>
         <div className="SummaryCard-content-item">
           <span>Cliente : </span>
           <span>{data?.customer.customer_name}</span>
