@@ -4,6 +4,7 @@ import {
   updateCustomerApi,
   getCustomerTypeApi,
   getCustomersApi,
+  removeCustomerApi,
 } from "../../api/customer";
 import { SearchBar } from "../SearchBar";
 import { CustomDatatable } from "../CustomDatatable";
@@ -27,14 +28,15 @@ import { DTOptionsMenu } from "../DTOptionsMenu";
 import { ConfirmModal } from "../ConfirmModal";
 import { isEqual } from "lodash";
 import { snakeToCamel } from "../../utils/stringFunctions";
-import "./index.css";
 import getLabelName from "../../utils/appLabels";
+import "./index.css";
 
 function CustomerCrud() {
   const { logout } = React.useContext(AuthContext);
   const [customers, setCustomers] = React.useState([]);
   const [formVisible, setFormVisible] = React.useState(false);
   const [toggleReq, setToggleReq] = React.useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
   const [preDataUpdate, setPreDataUpdate] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -93,6 +95,7 @@ function CustomerCrud() {
           row={row}
           setCurrentItem={setPreDataUpdate}
           setFormVisible={setFormVisible}
+          setConfirmDeletion={setIsConfirmOpen}
         />
       ),
       sortable: true,
@@ -220,6 +223,25 @@ function CustomerCrud() {
         columns={customersColumns}
         data={customers}
         isLoading={isLoading}
+      />
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        setIsOpen={setIsConfirmOpen}
+        modalMessage={
+          <p>
+            Este cliente y su expediente asociado será irrevesiblemente
+            eliminado, ¿Desea continuar?
+          </p>
+        }
+        modalType={"DELETE"}
+        confirmFunction={async () => {
+          let res = await removeCustomerApi(preDataUpdate.customer_id);
+          // if (res.error == true) {
+          //   setErrorBody(JSON.parse(res.body));
+          //   setIsError(true);
+          // }
+          setToggleReq(!toggleReq);
+        }}
       />
     </>
   );
@@ -940,6 +962,7 @@ function CustomerForm({
                   <input
                     id="isPolitician"
                     value={form.values.isPolitician}
+                    checked={form.values.isPolitician}
                     type="checkbox"
                     onChange={(e) => {
                       form.setFieldValue("isPep", true);
@@ -959,6 +982,7 @@ function CustomerForm({
                   <input
                     id="isPoliticianRelative"
                     value={form.values.isPoliticianRelative}
+                    checked={form.values.isPoliticianRelative}
                     type="checkbox"
                     onChange={(e) => {
                       form.setFieldValue(

@@ -35,15 +35,15 @@ function ConfirmModal({
           </div>
           <div className="ConfirmModal-body">
             <p>
-              {modalType == "FORM" &&
-                !modalMessage &&
-                `¿Está seguro que desea descartar este formulario? Perderá toda la
-              información ya digitada en el mismo.`}
-              {modalType == "DELETE" &&
-                !modalMessage &&
-                `¿Está seguro que desea eliminar este ${
-                  elementLabel || "elemento"
-                }? Esta operación es irreversible.`}
+              {modalType == "FORM" && !modalMessage
+                ? `¿Está seguro que desea descartar este formulario? Perderá toda la
+              información ya digitada en el mismo.`
+                : modalType == "FORM" && modalMessage}
+              {modalType == "DELETE" && !modalMessage
+                ? `¿Está seguro que desea eliminar este ${
+                    elementLabel || "elemento"
+                  }? Esta operación es irreversible.`
+                : modalType == "DELETE" && modalMessage}
             </p>
           </div>
           <div

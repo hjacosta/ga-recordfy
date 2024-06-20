@@ -58,7 +58,7 @@ function RecordDetailScreen() {
       beneficiaryId:
         currentRecord?.customer.customer_type == "LEGAL_PERSON" &&
         Yup.string().required("Este campo no puede estar vacio"),
-      expirationDate: Yup.date().required("Este campo no puede estar vacio"),
+      //expirationDate: Yup.date().required("Este campo no puede estar vacio"),
       docCreationDate: Yup.date().required("Este campo no puede estar vacio"),
     }),
     onSubmit: async (values, { resetForm }) => {
@@ -71,7 +71,9 @@ function RecordDetailScreen() {
           recordId: currentRecord.record_id,
           customerIdentification: currentRecord.customer.identification_number,
           fileTypeId: values.fileTypeId,
-          expirationDate: currentDate.toISOString("en-EN", { timeZone: "UTC" }),
+          expirationDate: values.expirationDate
+            ? currentDate.toISOString("en-EN", { timeZone: "UTC" })
+            : null,
           docCreationDate: docDate.toISOString("en-EN", { timeZone: "UTC" }),
           beneficiaryId:
             values.beneficiaryId ||
@@ -321,7 +323,7 @@ function RecordDetailScreen() {
                 <p className="RecordDetail-form-error">
                   {uploadForm.errors.partner}
                 </p>
-                <span>Fecha de expiración</span>
+                <span>Fecha de expiración (opcional)</span>
                 <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                   <input
                     type="date"

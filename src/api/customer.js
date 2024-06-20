@@ -41,6 +41,20 @@ async function updateCustomerApi(data, customerId) {
   }
 }
 
+async function removeCustomerApi(customerId) {
+  try {
+    const customers = await request({
+      path: `/customer/${customerId}`,
+      method: "DELETE",
+      data: {},
+    });
+
+    return customers;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 async function getCustomerTypeApi({ queryParams }) {
   try {
     const customerTypes = await request({
@@ -72,6 +86,7 @@ export {
   getCustomersApi,
   createCustomerApi,
   updateCustomerApi,
+  removeCustomerApi,
   getCustomerTypeApi,
   createCustomerTypeApi,
 };

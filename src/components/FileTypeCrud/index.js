@@ -14,11 +14,11 @@ import { AccordionForm } from "../AccordionForm";
 import { useFormik } from "formik";
 import { DTOptionsMenu } from "../DTOptionsMenu";
 import * as Yup from "yup";
-import { InputMask } from "@react-input/mask";
 import { snakeToCamel } from "../../utils/stringFunctions";
 import { isEqual } from "lodash";
 import { ConfirmModal } from "../ConfirmModal";
 import { ErrorModal } from "../ErrorModal";
+import { InputMask } from "@react-input/mask";
 import "./index.css";
 
 function FileTypeCrud() {
