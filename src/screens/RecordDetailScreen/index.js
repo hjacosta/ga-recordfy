@@ -381,7 +381,7 @@ function RecordDetailScreen() {
                       ? "| Familiar politico"
                       : ""
                   }
-                   (${beneficiary.record_files.length}/${
+                   (${getCurrentRecordFiles(beneficiary.record_files).length}/${
                       beneficiary.required_files.length
                     })`}
                     containerStyle={{}}
