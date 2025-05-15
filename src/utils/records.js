@@ -1,3 +1,5 @@
+import { groupBy } from "lodash";
+
 let appStatusColors = {
   colors: {
     empty: {
@@ -92,4 +94,25 @@ function getStatusColor(status) {
   return statusColors;
 }
 
-export { setStatusFromFileNumber, getStatusColor, getRiskLevelTag };
+function getCurrentRecordFiles(arr, byCategory) {
+  let result = [];
+  let groupedObj = groupBy(arr, "file_type.name");
+
+  for (let i of Object.entries(groupedObj)) {
+    result.push(i[1][0]);
+  }
+
+  //console.log(result);
+  if (byCategory == true) {
+    return groupedObj;
+  } else {
+    return result;
+  }
+}
+
+export {
+  setStatusFromFileNumber,
+  getStatusColor,
+  getRiskLevelTag,
+  getCurrentRecordFiles,
+};

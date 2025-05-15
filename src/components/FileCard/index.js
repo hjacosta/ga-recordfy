@@ -44,15 +44,19 @@ function FileCard({ data, handleRemove }) {
             <li>
               <span>Fecha de creación</span>
               <span>
-                {new Date(data.doc_creation_date).toLocaleDateString("do-Es")}
+                {data.doc_creation_date
+                  ? new Date(data.doc_creation_date).toLocaleDateString("do-Es")
+                  : "No aplica"}
               </span>
             </li>
             <li>
               <span>Fecha de expiración</span>
               <span>
-                {new Date(data.expiration_date).toLocaleDateString("do-Es", {
-                  timeZone: "UTC",
-                })}
+                {data.expiration_date
+                  ? new Date(data.expiration_date).toLocaleDateString("do-Es", {
+                      timeZone: "UTC",
+                    })
+                  : "No expira"}
               </span>
             </li>
             <li>

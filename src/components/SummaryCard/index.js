@@ -5,27 +5,27 @@ import getLabelName from "../../utils/appLabels";
 import { getCountries } from "../../utils/preData/countries";
 import { groupBy as lodashGroupBy } from "lodash";
 import { BarChart } from "../BarChart";
-import { getRiskLevelTag } from "../../utils/records";
+import { getCurrentRecordFiles, getRiskLevelTag } from "../../utils/records";
 import "./index.css";
 
 function SummaryCard({ data, fileTypes, riskLevel }) {
   const [countries, setCountries] = React.useState([]);
 
-  const getCurrentRecordFiles = (arr, byCategory) => {
-    let result = [];
-    let groupedObj = lodashGroupBy(arr, "file_type.name");
-    //console.log(groupedObj);
-    for (let i of Object.entries(groupedObj)) {
-      result.push(i[1][0]);
-    }
+  // const getCurrentRecordFiles = (arr, byCategory) => {
+  //   let result = [];
+  //   let groupedObj = lodashGroupBy(arr, "file_type.name");
 
-    //console.log(result);
-    if (byCategory == true) {
-      return groupedObj;
-    } else {
-      return result;
-    }
-  };
+  //   for (let i of Object.entries(groupedObj)) {
+  //     result.push(i[1][0]);
+  //   }
+
+  //   //console.log(result);
+  //   if (byCategory == true) {
+  //     return groupedObj;
+  //   } else {
+  //     return result;
+  //   }
+  // };
 
   React.useEffect(() => {
     (async () => {
@@ -110,19 +110,47 @@ function SummaryCard({ data, fileTypes, riskLevel }) {
       missingFiles.push(itemCounter);
     });
 
-  // console.log(data.beneficiaries[0].required_files);
+  const getRequiredFilesLabels = () => {
+    let labels = {};
+
+    data.beneficiaries.forEach((item) => {
+      item.required_files.forEach((sbItem) => {
+        labels[sbItem.file_type.name] = "";
+      });
+    });
+
+    return Object.keys(labels);
+  };
+
+  const getAmountByLabel = (key = "record_files") => {
+    const categorizedAmounts = {};
+
+    data.beneficiaries.forEach((b) => {
+      getCurrentRecordFiles(b[key]).forEach((f) => {
+        if (categorizedAmounts[f.file_type.name]) {
+          categorizedAmounts[f.file_type.name] += 1;
+        } else {
+          categorizedAmounts[f.file_type.name] = 1;
+        }
+      });
+    });
+
+    return getRequiredFilesLabels().map(
+      (item) => categorizedAmounts[item] || 0
+    );
+  };
 
   let barChartData = {
-    labels: [...fileTypes.map((item) => item.name)],
+    labels: getRequiredFilesLabels(),
     datasets: [
       {
         label: "Subidos",
-        data: uploadedFiles,
+        data: getAmountByLabel(),
         backgroundColor: "#99bee2",
       },
       {
         label: "Restantes",
-        data: missingFiles,
+        data: getAmountByLabel("missing_files"),
         backgroundColor: "rgba(0,0,0,0.05)",
       },
     ],

@@ -25,6 +25,8 @@ import { ConfirmModal } from "../../components/ConfirmModal";
 import { MdHistory } from "react-icons/md";
 import { groupBy as lodashGroupBy, orderBy } from "lodash";
 import "./index.css";
+import { getCurrentRecordFiles } from "../../utils/records";
+import { NotificationManager } from "react-notifications";
 
 function RecordDetailScreen() {
   const [files, setFiles] = React.useState([]);
@@ -32,7 +34,7 @@ function RecordDetailScreen() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [reqToggle, setReqToggle] = React.useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
-  const { auth } = React.useContext(AuthContext);
+  const { auth, logout } = React.useContext(AuthContext);
   const { records, setRecords, fileTypes, setFileTypes, fileLimitByUserType } =
     React.useContext(RecordContext);
 
@@ -59,11 +61,13 @@ function RecordDetailScreen() {
         currentRecord?.customer.customer_type == "LEGAL_PERSON" &&
         Yup.string().required("Este campo no puede estar vacio"),
       //expirationDate: Yup.date().required("Este campo no puede estar vacio"),
-      docCreationDate: Yup.date().required("Este campo no puede estar vacio"),
+      //docCreationDate: Yup.date().required("Este campo no puede estar vacio"),
     }),
     onSubmit: async (values, { resetForm }) => {
       let docDate = new Date(values.docCreationDate);
       let currentDate = new Date(values.expirationDate);
+
+      console.log(values.expirationDate ? true : false);
 
       try {
         let data = {
@@ -74,7 +78,9 @@ function RecordDetailScreen() {
           expirationDate: values.expirationDate
             ? currentDate.toISOString("en-EN", { timeZone: "UTC" })
             : null,
-          docCreationDate: docDate.toISOString("en-EN", { timeZone: "UTC" }),
+          docCreationDate: values.docDate
+            ? docDate.toISOString("en-EN", { timeZone: "UTC" })
+            : null,
           beneficiaryId:
             values.beneficiaryId ||
             currentRecord.beneficiaries[0].beneficiary_id,
@@ -108,9 +114,6 @@ function RecordDetailScreen() {
           recordId,
         });
 
-        setCurrentRecord(retrievedRecords.body[0]);
-        setIsLoading(false);
-
         // const searchedRecords = await getRecordsApi({});
         // if (searchedRecords.error === true) {
         //   throw new Error(searchedRecords.body);
@@ -133,12 +136,23 @@ function RecordDetailScreen() {
           throw new Error(fileTypes.body);
         }
         setFileTypes(fileTypes.body);
+        setCurrentRecord(retrievedRecords.body[0]);
+        setIsLoading(false);
 
-        if (recordFiles.error === true) {
-          throw new Error(recordFiles.body);
+        if (retrievedRecords.error === true) {
+          throw new Error(retrievedRecords.body);
         }
-        setFiles(recordFiles.body);
+        setFiles(retrievedRecords.body);
       } catch (error) {
+        if (error.message.includes("jwt")) {
+          NotificationManager.info("Tu sesión ha expirado");
+
+          setTimeout(() => {
+            NotificationManager.listNotify = [];
+            logout();
+            navigate("/");
+          }, 4000);
+        }
         // alert(error.message);
         if (error.message.includes("not found")) {
           setFiles([]);
@@ -166,16 +180,17 @@ function RecordDetailScreen() {
     }
   };
 
-  const getCurrentRecordFiles = (arr) => {
-    let result = [];
-    let groupedObj = lodashGroupBy(arr, "file_type.name");
-    for (let i of Object.entries(groupedObj)) {
-      result.push(i[1][0]);
-    }
+  const getRequiredFilesLabels = () => {
+    let labels = {};
 
-    return result;
+    currentRecord.beneficiaries.forEach((item) => {
+      item.required_files.forEach((sbItem) => {
+        labels[sbItem.file_type.name] = "";
+      });
+    });
+
+    return Object.keys(labels);
   };
-
   return (
     <React.Fragment>
       <TopBar
@@ -272,11 +287,15 @@ function RecordDetailScreen() {
                       <option value="all" disabled>
                         Seleccione un tipo de archivo
                       </option>
-                      {fileTypes.map((ft, index) => (
-                        <option key={index} value={ft.file_type_id}>
-                          {ft.name}
-                        </option>
-                      ))}
+                      {fileTypes
+                        .filter((item) =>
+                          getRequiredFilesLabels().some((l) => l == item.name)
+                        )
+                        .map((ft, index) => (
+                          <option key={index} value={ft.file_type_id}>
+                            {ft.name}
+                          </option>
+                        ))}
                     </select>
                   </div>
                   <div style={{ flex: 1 }}>
@@ -332,7 +351,7 @@ function RecordDetailScreen() {
                     onChange={(e) =>
                       uploadForm.setFieldValue(
                         "expirationDate",
-                        `${e.target.value}`
+                        `${e.target.value || ""}`
                       )
                     }
                     // disabled

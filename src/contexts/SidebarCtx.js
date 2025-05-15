@@ -4,7 +4,7 @@ const SidebarContext = React.createContext();
 
 function SidebarProvider({ children }) {
   const [isVisible, setIsVisible] = React.useState(false);
-  const sidebarWidth = "260px";
+  const sidebarWidth = "200px";
 
   return (
     <SidebarContext.Provider

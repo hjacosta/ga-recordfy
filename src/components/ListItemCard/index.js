@@ -1,19 +1,26 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { setStatusFromFileNumber, getStatusColor } from "../../utils/records";
+import {
+  setStatusFromFileNumber,
+  getStatusColor,
+  getRiskLevelTag,
+  getCurrentRecordFiles,
+} from "../../utils/records";
 import getLabelName from "../../utils/appLabels";
 import "./index.css";
 
 function ListItemCard({ data, limit }) {
+  console.log(data);
+
   const navigate = useNavigate();
 
   let requiredFiles = data.beneficiaries.reduce(
-    (acc, item) => acc + item.required_files.length,
+    (acc, item) => acc + getCurrentRecordFiles(item.required_files).length,
     0
   );
 
   let recordFiles = data.beneficiaries.reduce(
-    (acc, item) => acc + item.record_files.length,
+    (acc, item) => acc + getCurrentRecordFiles(item.record_files).length,
     0
   );
 
@@ -34,9 +41,28 @@ function ListItemCard({ data, limit }) {
       </div>
       <div className="ListItemCard-detail">
         <ul>
+          <li
+            className=""
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: 4,
+            }}
+          >
+            <span>Nivel de riesgo</span>
+            <span
+              className="SummaryCard-risktag"
+              style={{
+                backgroundColor: getRiskLevelTag(data.customer.risk_level)
+                  .color,
+              }}
+            >
+              {getRiskLevelTag(data.customer.risk_level).label}
+            </span>
+          </li>
           <li>
-            <span>No. expediente</span>
-            <span>{data.record_code}</span>
+            <span>Pep</span>
+            <span>{data.customer.is_pep ? "Si" : "No"}</span>
           </li>
           <li>
             <span>Tipo de Cliente</span>
@@ -52,10 +78,10 @@ function ListItemCard({ data, limit }) {
             <span>Fecha de creación</span>
             <span>{data.created_at.split("T")[0]}</span>
           </li>
-          <li>
-            <span>Cratedo por</span>
+          {/* <li>
+            <span>Creado por</span>
             <span>{data.created_by}</span>
-          </li>
+          </li> */}
         </ul>
       </div>
     </div>

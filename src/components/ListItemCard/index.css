@@ -54,7 +54,7 @@
 }
 
 .ListItemCard-detail {
-  margin-top: 16px;
+  margin-top: 8px;
   padding: 0 12px;
   color: var(--text-down-grey);
   transition: all var(--anim-2);

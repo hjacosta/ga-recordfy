@@ -4,6 +4,11 @@ import { MdSearch, MdFilterListAlt } from "react-icons/md";
 import { AiOutlinePlus } from "react-icons/ai";
 import Popover from "@mui/material/Popover";
 import { useFormik } from "formik";
+import {
+  RiFileExcel2Fill,
+  RiLayoutMasonryFill,
+  RiTableFill,
+} from "react-icons/ri";
 
 function getInitialValues(arr, mainFilter) {
   let initialValues = {};
@@ -33,6 +38,11 @@ function SearchBar({
   addFormVisible,
   customClass,
   searchButton,
+  showTableFormat,
+  onToggleLayout,
+  isLayoutChangable = false,
+  onSearch,
+  onExport,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const searchForm = useFormik({
@@ -47,9 +57,14 @@ function SearchBar({
       });
 
       setSearchParams(data);
+      onSearch();
       // resetForm();
     },
   });
+
+  const toggleLayout = () => {
+    onToggleLayout();
+  };
 
   React.useEffect(() => {
     const delayInput = setTimeout(() => {
@@ -131,6 +146,7 @@ function SearchBar({
           alignItems: "center",
           marginRight: 12,
           marginLeft: 4,
+          gap: 12,
         }}
       >
         <button
@@ -185,6 +201,32 @@ function SearchBar({
             ))}
           </ul>
         </Popover>
+        {isLayoutChangable && (
+          <div>
+            {showTableFormat ? (
+              <RiTableFill
+                onClick={() => toggleLayout()}
+                size={18}
+                style={{ cursor: "pointer" }}
+                title="Table"
+              />
+            ) : (
+              <RiLayoutMasonryFill
+                onClick={() => toggleLayout()}
+                size={18}
+                style={{ cursor: "pointer" }}
+                title="Elementos"
+              />
+            )}
+          </div>
+        )}
+        <RiFileExcel2Fill
+          size={18}
+          color="darkgreen"
+          style={{ cursor: "pointer" }}
+          title="Exportar a Excel"
+          onClick={onExport}
+        />
       </div>
       {addButton ? (
         <div className="search-bar-group">

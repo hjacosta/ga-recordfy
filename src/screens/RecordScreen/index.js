@@ -21,6 +21,11 @@ import { SectionDivision } from "../../components/SectionDivision";
 import { getCountries } from "../../utils/preData/countries";
 import { InputMask } from "@react-input/mask";
 import "react-notifications/lib/notifications.css";
+import { CustomDatatable } from "../../components/CustomDatatable";
+import { getCurrentRecordFiles, getRiskLevelTag } from "../../utils/records";
+import getLabelName from "../../utils/appLabels";
+import { useNavigate } from "react-router-dom";
+import exportToExcel from "../../hooks/useExportToExcel";
 
 function RecordScreen() {
   const { auth, logout } = React.useContext(AuthContext);
@@ -29,12 +34,15 @@ function RecordScreen() {
   // const [records, setRecords] = React.useState([]);
   const [customers, setCustomers] = React.useState([]);
   const [searchParams, setSearchParams] = React.useState({});
-  const [requestToggle, setRequestToggle] = React.useState(false);
+  const [requestToggle, setRequestToggle] = React.useState(undefined);
   const [searchedText, setSearchedText] = React.useState("");
   const [isFormOpened, setIsFormOpened] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isSaveBtnDisabled, setIsSaveBtnDisabled] = React.useState(false);
   const [onSaveOpenNew, setOnSaveOpenNew] = React.useState(false);
+  const [toggleLayout, setToggleLayout] = React.useState(false);
+
+  const navigate = useNavigate();
 
   const recordForm = useFormik({
     initialValues: {
@@ -43,6 +51,7 @@ function RecordScreen() {
       customerId: "",
       customerName: "",
       numberOfBeneficiaries: 1,
+      parentId: "",
     },
     validateOnChange: false,
     validationSchema: Yup.object({
@@ -61,6 +70,7 @@ function RecordScreen() {
         beneficiaries: currentBeneficiaries,
         createdBy: auth.userProfile.email,
         lastModifiedBy: auth.userProfile.email,
+        parentId: values.parentId,
       };
 
       try {
@@ -82,45 +92,54 @@ function RecordScreen() {
     },
   });
 
-  React.useEffect(() => {
-    (async () => {
-      try {
-        // setRecords([]);
-        setIsLoading(true);
-        const records = await getRecordsApi(searchParams);
+  const fetchRecords = async () => {
+    try {
+      // setRecords([]);
+      setIsLoading(true);
+      const records = await getRecordsApi(searchParams);
 
-        const customers = await getCustomersApi({});
-        setIsLoading(false);
+      const customers = await getCustomersApi({});
+      setIsLoading(false);
 
-        setCustomers(customers.body);
-        if (records.error === true) {
-          throw new Error(records.body);
-        }
-
-        setRecords(records.body);
-        // const maxRecordCode = Math.max(
-        //   ...records.body.map((i) => i.record_code)
-        // );
-
-        // recordForm.setFieldValue("recordCode", maxRecordCode + 1);
-      } catch (error) {
-        if (error.message.includes("jwt expired")) {
-          NotificationManager.info("Tu sesión ha expirado");
-          setTimeout(() => {
-            logout();
-          }, 4000);
-        }
-
-        if (error.message.includes("not found")) {
-          setRecords([]);
-          setIsLoading(false);
-          // recordForm.setFieldValue("recordCode", 1);
-        }
-
-        console.log(error);
+      if (records.error === true) {
+        throw new Error(records.body);
       }
-    })();
-  }, [searchParams, requestToggle]);
+      setCustomers(customers.body);
+      setRecords(records.body);
+
+      // const maxRecordCode = Math.max(
+      //   ...records.body.map((i) => i.record_code)
+      // );
+
+      // recordForm.setFieldValue("recordCode", maxRecordCode + 1);
+    } catch (error) {
+      if (error.message.includes("jwt")) {
+        NotificationManager.info("Tu sesión ha expirado");
+
+        setTimeout(() => {
+          NotificationManager.listNotify = [];
+          logout();
+          navigate("/");
+        }, 4000);
+      }
+
+      if (error.message.includes("not found")) {
+        setRecords([]);
+        setIsLoading(false);
+        // recordForm.setFieldValue("recordCode", 1);
+      }
+
+      console.log(error.message);
+    }
+  };
+
+  React.useEffect(() => {
+    if (requestToggle) {
+      console.log("RENDERS");
+      fetchRecords();
+    }
+    setRequestToggle(false);
+  }, [requestToggle]);
 
   const handleCustomerSelection = (customer) => {
     recordForm.setFieldValue("customerId", customer.customer_id);
@@ -145,6 +164,8 @@ function RecordScreen() {
     }
     setSearchedText("");
   };
+
+  console.log(requestToggle);
 
   const searchedCustomers = customers
     .filter((item) => Object.entries(item.record || {}).length == 0)
@@ -203,7 +224,7 @@ function RecordScreen() {
 
     newBeneficiaries[index][prop] = value;
     newBeneficiaries[index].order = index;
-    setIdentificationMask("___-_______-_");
+    //setIdentificationMask("___-_______-_");
     setCurrentBenficiaries(newBeneficiaries);
   };
 
@@ -237,6 +258,115 @@ function RecordScreen() {
     setCurrentBenficiaries([]);
     setIsFormOpened(false);
   };
+
+  const columns = [
+    {
+      name: "No. expediente",
+      selector: (row) => row.record_code,
+      cell: (row) => (
+        <span
+          style={{ cursor: "pointer" }}
+          onClick={() => navigate(`/records/${row.record_id}`)}
+        >
+          {row.record_code}
+        </span>
+      ),
+      sortable: true,
+    },
+    {
+      name: "Cliente",
+      selector: (row) => row.customer.customer_name,
+      sortable: true,
+    },
+    {
+      name: "Riesgo",
+      selector: (row) => {
+        let result = "";
+
+        switch (row.customer.risk_level) {
+          case "LOW":
+            result = "A-LOW";
+            break;
+          case "MEDIUM":
+            result = "B-MEDIUM";
+            break;
+          case "HIGH":
+            result = "C-HIGH";
+            break;
+
+          default:
+            break;
+        }
+
+        return result;
+      },
+      cell: (row) => {
+        return (
+          <span
+            className="SummaryCard-risktag"
+            style={{
+              marginLeft: 0,
+              backgroundColor: getRiskLevelTag(row.customer.risk_level).color,
+            }}
+          >
+            {getRiskLevelTag(row.customer.risk_level).label}
+          </span>
+        );
+      },
+
+      sortable: true,
+    },
+    {
+      name: "Pep",
+      selector: (row) => row.customer.is_pep,
+      cell: (row) => (
+        <span style={{ fontWeight: 500 }}>
+          {row.customer.is_pep ? "Si" : "No"}
+        </span>
+      ),
+      sortable: true,
+    },
+    {
+      name: "Tipo de cliente",
+      selector: (row) => row.customer.customer_type,
+      cell: (row) => getLabelName(row.customer.customer_type),
+      sortable: true,
+    },
+    {
+      name: "Archivos",
+      selector: (row) =>
+        row.beneficiaries.reduce(
+          (acc, item) =>
+            acc + getCurrentRecordFiles(item.required_files).length,
+          0
+        ),
+      cell: (row) => {
+        let requiredFiles = row.beneficiaries.reduce(
+          (acc, item) =>
+            acc + getCurrentRecordFiles(item.required_files).length,
+          0
+        );
+
+        let recordFiles = row.beneficiaries.reduce(
+          (acc, item) => acc + getCurrentRecordFiles(item.record_files).length,
+          0
+        );
+
+        return (
+          <span>
+            {recordFiles} de {requiredFiles}
+          </span>
+        );
+      },
+      sortable: true,
+    },
+    {
+      name: "Fecha creación",
+      selector: (row) => row.created_at,
+      cell: (row) => row.created_at.split("T")[0],
+      sortable: true,
+    },
+  ];
 
   return (
     <div>
@@ -337,8 +467,31 @@ function RecordScreen() {
                 </ul>
               </div>
             </div>
+
             {recordForm.values.customerType == "LEGAL_PERSON" && (
               <>
+                {/* <SectionDivision title={"Empresa principal"} />
+                <div className="RecordForm-group">
+                  <div>
+                    <select>
+                      {customers.map((customer, index) => (
+                        <option
+                          key={index}
+                          onChange={(e) }
+                          onClick={() => handleCustomerSelection(customer)}
+                        >
+                          {`${customer.customer_name}  ${
+                            customer.identification_number
+                          } (${
+                            customer.customer_type == "PHYSICAL_PERSON"
+                              ? "Persona física"
+                              : "Persona Jurídica"
+                          })`}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div> */}
                 <SectionDivision title={"Beneficiarios"} />
                 <div className="RecordForm-group">
                   <div>
@@ -729,24 +882,39 @@ function RecordScreen() {
           searchItems={searchItems}
           setSearchItems={setSearchItems}
           setSearchParams={setSearchParams}
+          showTableFormat={toggleLayout}
+          isLayoutChangable={true}
+          onSearch={() => {
+            setRequestToggle((prev) => !prev);
+          }}
+          onExport={() => {
+            exportToExcel(records);
+          }}
+          onToggleLayout={() => {
+            setToggleLayout((prev) => !prev);
+          }}
         />
-        <ListWrapper>
-          {records?.length === 0 && !isLoading && (
-            <NoDataFound label={"No se econtro ningún expediente"} />
-          )}
+        {toggleLayout ? (
+          <ListWrapper>
+            {records?.length === 0 && !isLoading && (
+              <NoDataFound label={"No se econtro ningún expediente"} />
+            )}
 
-          {isLoading ? (
-            <Loader />
-          ) : (
-            records?.map((record, key) => (
-              <ListItemCard
-                key={key}
-                data={record}
-                limit={fileLimitByUserType}
-              />
-            ))
-          )}
-        </ListWrapper>
+            {isLoading ? (
+              <Loader />
+            ) : (
+              records?.map((record, key) => (
+                <ListItemCard
+                  key={key}
+                  data={record}
+                  limit={fileLimitByUserType}
+                />
+              ))
+            )}
+          </ListWrapper>
+        ) : (
+          <CustomDatatable columns={columns} data={records} />
+        )}
       </Layout>
     </div>
   );

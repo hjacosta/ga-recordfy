@@ -268,7 +268,13 @@ function BeneficiaryTypeFile() {
               <div style={{ fontSize: 16 }}>
                 <p>{errorBody.msg}</p>
                 <ul
-                  style={{ listStyle: "none", marginLeft: 0, paddingLeft: 0 }}
+                  style={{
+                    listStyle: "none",
+                    marginLeft: 0,
+                    paddingLeft: 0,
+                    maxHeight: 100,
+                    overflowY: "auto",
+                  }}
                 >
                   {errorBody?.detail?.map((item) => (
                     <li style={{ fontSize: 14 }}>
