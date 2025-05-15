@@ -183,8 +183,8 @@ function RecordDetailScreen() {
   const getRequiredFilesLabels = () => {
     let labels = {};
 
-    currentRecord.beneficiaries.forEach((item) => {
-      item.required_files.forEach((sbItem) => {
+    currentRecord?.beneficiaries?.forEach((item) => {
+      item?.required_files?.forEach((sbItem) => {
         labels[sbItem.file_type.name] = "";
       });
     });
@@ -288,7 +288,7 @@ function RecordDetailScreen() {
                         Seleccione un tipo de archivo
                       </option>
                       {fileTypes
-                        .filter((item) =>
+                        ?.filter((item) =>
                           getRequiredFilesLabels().some((l) => l == item.name)
                         )
                         .map((ft, index) => (
@@ -330,7 +330,7 @@ function RecordDetailScreen() {
                         currentRecord.beneficiaries,
                         ["order"],
                         "desc"
-                      ).map((opt, index) => (
+                      )?.map((opt, index) => (
                         <option key={index} value={opt.beneficiary_id}>
                           {opt.name}
                         </option>
@@ -386,7 +386,7 @@ function RecordDetailScreen() {
             </div>
           }
           {/* <SearchBar mainFilter={"name"} searchItems={[]} /> */}
-          {orderBy(currentRecord.beneficiaries, ["order"], "desc").map(
+          {orderBy(currentRecord.beneficiaries, ["order"], "desc")?.map(
             (beneficiary, index) => {
               return (
                 <>
@@ -400,9 +400,9 @@ function RecordDetailScreen() {
                       ? "| Familiar politico"
                       : ""
                   }
-                   (${getCurrentRecordFiles(beneficiary.record_files).length}/${
-                      beneficiary.required_files.length
-                    })`}
+                   (${
+                     getCurrentRecordFiles(beneficiary.record_files)?.length
+                   }/${beneficiary.required_files.length})`}
                     containerStyle={{}}
                   />
 
