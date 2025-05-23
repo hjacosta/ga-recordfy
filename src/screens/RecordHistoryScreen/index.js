@@ -38,13 +38,20 @@ function RecordHistoryScreen() {
     (async () => {
       try {
         let recordId = window.location.pathname?.slice(
-          window.location.pathname.lastIndexOf("/") - 36,
+          window.location.pathname.lastIndexOf("/") - 11,
           window.location.pathname.lastIndexOf("/")
         );
+
+        console.log(recordId);
+
         setIsLoading(true);
         const retrievedRecords = await getRecordsApi({
-          recordId,
+          identificationNumber: recordId,
         });
+
+        if (retrievedRecords.error === true) {
+          throw new Error(retrievedRecords.body);
+        }
 
         setCurrentRecord(retrievedRecords.body[0]);
         setIsLoading(false);
@@ -77,9 +84,8 @@ function RecordHistoryScreen() {
     let years = [];
 
     while (currentYear > rangeLimit) {
-      if (currentYear >= 2023) {
-        years.push(currentYear);
-      }
+      years.push(currentYear);
+
       currentYear -= 1;
     }
     return years;
@@ -122,6 +128,8 @@ function RecordHistoryScreen() {
     }
   };
 
+  console.log(currentRecord);
+
   return (
     <div onClick={() => navigate(window.location.pathname)}>
       <TopBar
@@ -155,18 +163,29 @@ function RecordHistoryScreen() {
               {currentRecord?.beneficiaries.map((beneficiary, index) => {
                 return (
                   <>
-                    <SectionDivision
-                      title={`${beneficiary.name}  ---  ${getLabelName(
-                        beneficiary.beneficiary_type
-                      )} `}
-                      containerStyle={{}}
-                    />
+                    {beneficiary.record_files.filter(
+                      (rf) =>
+                        rf.doc_creation_date?.split("T")[0]?.split("-")[0] ==
+                          year ||
+                        rf.expiration_date?.split("T")[0]?.split("-")[0] == year
+                    ).length > 0 && (
+                      <SectionDivision
+                        title={`${beneficiary.name}  ---  ${getLabelName(
+                          beneficiary.beneficiary_type
+                        )} `}
+                        textStyle={{ marginTop: 16 }}
+                      />
+                    )}
 
                     <ListWrapper>
                       {beneficiary.record_files
                         ?.filter(
                           (rf) =>
-                            rf.created_at?.split("T")[0]?.split("-")[0] == year
+                            rf.doc_creation_date
+                              ?.split("T")[0]
+                              ?.split("-")[0] == year ||
+                            rf.expiration_date?.split("T")[0]?.split("-")[0] ==
+                              year
                         )
                         .map((file, key) => (
                           <FileCard

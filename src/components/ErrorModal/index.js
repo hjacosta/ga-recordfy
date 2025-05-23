@@ -3,13 +3,13 @@ import Modal from "@mui/material/Modal";
 import { TiWarning } from "react-icons/ti";
 import "./index.css";
 
-function ErrorModal({ isOpen, setIsOpen, errorBody, onClose }) {
+function ErrorModal({ isOpen, errorBody, onClose }) {
   return (
     <div>
       <Modal
         style={{ margin: "0 16px" }}
         open={isOpen}
-        onClose={() => setIsOpen(false)}
+        onClose={onClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -36,15 +36,12 @@ function ErrorModal({ isOpen, setIsOpen, errorBody, onClose }) {
           >
             <p
               className="choice-item choice-item--yes"
-              onClick={async () => {
-                setIsOpen(false);
-              }}
+              onClick={async () => {}}
             ></p>
             <p
               className="choice-item choice-item--no"
               onClick={() => {
                 onClose();
-                setIsOpen(false);
               }}
             >
               Ok

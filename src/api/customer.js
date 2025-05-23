@@ -23,7 +23,7 @@ async function createCustomerApi(data) {
 
     return customers;
   } catch (error) {
-    throw new Error(error.message);
+    throw error;
   }
 }
 
@@ -37,7 +37,7 @@ async function updateCustomerApi(data, customerId) {
 
     return customers;
   } catch (error) {
-    throw new Error(error.message);
+    throw error;
   }
 }
 

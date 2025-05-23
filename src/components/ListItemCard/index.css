@@ -2,7 +2,8 @@
   flex: 1;
   /* flex-basis: 350px; */
   margin: 8px;
-  max-width: 360px;
+  min-width: 320px;
+  max-width: 340px;
   flex-direction: column;
   box-sizing: border-box;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
@@ -16,7 +17,6 @@
   transition: all var(--anim-3);
   /* -webkit-transform-style: preserve-3d; */
   -webkit-backface-visibility: hidden;
-  font-size: 12px;
 }
 
 .ListItemCard:hover {
@@ -58,6 +58,7 @@
   padding: 0 12px;
   color: var(--text-down-grey);
   transition: all var(--anim-2);
+  font-size: 12px;
 }
 
 .ListItemCard-detail ul {

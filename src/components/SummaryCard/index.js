@@ -33,15 +33,24 @@ function SummaryCard({ data, fileTypes, riskLevel }) {
       setCountries(res);
     })();
   }, []);
-  let requiredFiles = data.beneficiaries.reduce(
-    (acc, item) => acc + item.required_files.length,
-    0
-  );
+  let requiredFiles = data.beneficiaries
+    ?.filter(
+      (beneficiary) =>
+        beneficiary.beneficiary_type == "PHYSICAL_PERSON" ||
+        beneficiary.identification_number == data.record_code
+    )
+    .reduce((acc, item) => acc + item.required_files.length, 0);
 
-  let recordFiles = data.beneficiaries.reduce(
-    (acc, item) => acc + getCurrentRecordFiles(item.record_files).length,
-    0
-  );
+  let recordFiles = data.beneficiaries
+    ?.filter(
+      (beneficiary) =>
+        beneficiary.beneficiary_type == "PHYSICAL_PERSON" ||
+        beneficiary.identification_number == data.record_code
+    )
+    .reduce(
+      (acc, item) => acc + getCurrentRecordFiles(item.record_files).length,
+      0
+    );
 
   // console.log(data.beneficiaries[1].record_files);
 
@@ -113,11 +122,17 @@ function SummaryCard({ data, fileTypes, riskLevel }) {
   const getRequiredFilesLabels = () => {
     let labels = {};
 
-    data.beneficiaries.forEach((item) => {
-      item.required_files.forEach((sbItem) => {
-        labels[sbItem.file_type.name] = "";
+    data.beneficiaries
+      ?.filter(
+        (beneficiary) =>
+          beneficiary.beneficiary_type == "PHYSICAL_PERSON" ||
+          beneficiary.identification_number == data.record_code
+      )
+      .forEach((item) => {
+        item.required_files.forEach((sbItem) => {
+          labels[sbItem.file_type.name] = "";
+        });
       });
-    });
 
     return Object.keys(labels);
   };
@@ -125,15 +140,21 @@ function SummaryCard({ data, fileTypes, riskLevel }) {
   const getAmountByLabel = (key = "record_files") => {
     const categorizedAmounts = {};
 
-    data.beneficiaries.forEach((b) => {
-      getCurrentRecordFiles(b[key]).forEach((f) => {
-        if (categorizedAmounts[f.file_type.name]) {
-          categorizedAmounts[f.file_type.name] += 1;
-        } else {
-          categorizedAmounts[f.file_type.name] = 1;
-        }
+    data.beneficiaries
+      ?.filter(
+        (beneficiary) =>
+          beneficiary.beneficiary_type == "PHYSICAL_PERSON" ||
+          beneficiary.identification_number == data.record_code
+      )
+      .forEach((b) => {
+        getCurrentRecordFiles(b[key]).forEach((f) => {
+          if (categorizedAmounts[f.file_type.name]) {
+            categorizedAmounts[f.file_type.name] += 1;
+          } else {
+            categorizedAmounts[f.file_type.name] = 1;
+          }
+        });
       });
-    });
 
     return getRequiredFilesLabels().map(
       (item) => categorizedAmounts[item] || 0
@@ -179,7 +200,7 @@ function SummaryCard({ data, fileTypes, riskLevel }) {
           <span>{getLabelName(data?.customer.customer_type)}</span>
         </div>
         <div className="SummaryCard-content-item">
-          <span>Cédula : </span>
+          <span>Identifiación : </span>
           <span>{data?.customer.identification_number}</span>
         </div>
         <div className="SummaryCard-content-item">

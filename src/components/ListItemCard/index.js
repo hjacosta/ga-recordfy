@@ -27,7 +27,7 @@ function ListItemCard({ data, limit }) {
   return (
     <div
       className="ListItemCard"
-      onClick={() => navigate(`/records/${data.record_id}`)}
+      onClick={() => navigate(`/records/${data.record_code}`)}
     >
       <div className="ListItemCard-header">
         <p>{`${data.customer.customer_name}`}</p>

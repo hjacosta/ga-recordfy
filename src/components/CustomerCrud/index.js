@@ -30,6 +30,7 @@ import { isEqual } from "lodash";
 import { snakeToCamel } from "../../utils/stringFunctions";
 import getLabelName from "../../utils/appLabels";
 import "./index.css";
+import { ErrorModal } from "../ErrorModal";
 
 function CustomerCrud() {
   const { logout } = React.useContext(AuthContext);
@@ -265,6 +266,7 @@ function CustomerForm({
   const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
   const [isSaveBtnDisabled, setIsSaveBtnDisabled] = React.useState(false);
   const [onSaveOpenNew, setOnSaveOpenNew] = React.useState(false);
+  const [error, setError] = React.useState(undefined);
   // const [discardConfirmed, setDiscardConfirmed] = React.useState(false);
 
   const form = useFormik({
@@ -333,19 +335,21 @@ function CustomerForm({
           await createCustomerApi(data);
         }
         setToggleReq((state) => !state);
+
+        if (onSaveOpenNew == false) {
+          setIsFormOpened(false);
+        }
+        resetForm();
       } catch (error) {
         if (error.message.includes("jwt")) {
           logout();
           navigate("/");
         }
-        console.log(error);
+        console.log("$$$", error.message);
+        setError(error.message);
       }
 
-      if (onSaveOpenNew == false) {
-        setIsFormOpened(false);
-      }
       setIsLoading(false);
-      resetForm();
     },
   });
 
@@ -1063,6 +1067,11 @@ function CustomerForm({
         setIsOpen={setIsConfirmOpen}
         confirmFunction={handleClose}
         modalType={"FORM"}
+      />
+      <ErrorModal
+        isOpen={error ? true : false}
+        errorBody={error}
+        onClose={() => setError(undefined)}
       />
     </>
   );

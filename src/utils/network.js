@@ -73,15 +73,15 @@ async function request({ path, method, data, customParams, isFormData }) {
     const res = await fetch(url, options);
     const result = await res.json();
 
-    // if (result.error === true) {
-    //   if (result.body.includes("not found") == false) {
-    //     throw new Error(result.body);
-    //   }
-    // }
+    if (result.error === true) {
+      throw new Error(result.body);
+    }
 
     return result;
   } catch (error) {
-    throw new Error(error.message);
+    console.log(error);
+
+    throw error;
   }
 }
 

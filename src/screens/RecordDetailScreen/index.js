@@ -4,11 +4,13 @@ import { TopBar } from "../../components/TopBar";
 import { SearchBar } from "../../components/SearchBar";
 import { RecordContext } from "../../contexts/RecordContext";
 import { SummaryCard } from "../../components/SummaryCard";
-import { BsFillCloudUploadFill } from "react-icons/bs";
+import { BsArrowRight, BsFillCloudUploadFill } from "react-icons/bs";
 import { ListWrapper } from "../../components/ListWrapper";
 import {
   getRecordFilesApi,
+  removeOtherFileApi,
   removeRecordFileApi,
+  uploadOtherFileApi,
   uploadRecordFileApi,
 } from "../../api/recordFile";
 import { getRecordsApi } from "../../api/record";
@@ -19,7 +21,7 @@ import * as Yup from "yup";
 import { getFileTypeApi } from "../../api/fileType";
 import { AuthContext } from "../../contexts/AuthContext";
 import { SectionDivision } from "../../components/SectionDivision";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useParams, useLocation, useNavigate, Link } from "react-router-dom";
 import getLabelName from "../../utils/appLabels";
 import { ConfirmModal } from "../../components/ConfirmModal";
 import { MdHistory } from "react-icons/md";
@@ -27,6 +29,7 @@ import { groupBy as lodashGroupBy, orderBy } from "lodash";
 import "./index.css";
 import { getCurrentRecordFiles } from "../../utils/records";
 import { NotificationManager } from "react-notifications";
+import { updateSearchPath } from "../../hooks/useUpdateSearchPath";
 
 function RecordDetailScreen() {
   const [files, setFiles] = React.useState([]);
@@ -64,10 +67,10 @@ function RecordDetailScreen() {
       //docCreationDate: Yup.date().required("Este campo no puede estar vacio"),
     }),
     onSubmit: async (values, { resetForm }) => {
+      console.log(values.docCreationDate);
+
       let docDate = new Date(values.docCreationDate);
       let currentDate = new Date(values.expirationDate);
-
-      console.log(values.expirationDate ? true : false);
 
       try {
         let data = {
@@ -78,7 +81,7 @@ function RecordDetailScreen() {
           expirationDate: values.expirationDate
             ? currentDate.toISOString("en-EN", { timeZone: "UTC" })
             : null,
-          docCreationDate: values.docDate
+          docCreationDate: values.docCreationDate
             ? docDate.toISOString("en-EN", { timeZone: "UTC" })
             : null,
           beneficiaryId:
@@ -89,7 +92,12 @@ function RecordDetailScreen() {
           file: values.file,
         };
 
-        const response = await uploadRecordFileApi(data);
+        let response;
+        if (values.beneficiaryId == "OTHER_DOC") {
+          response = await uploadOtherFileApi(data);
+        } else {
+          response = await uploadRecordFileApi(data);
+        }
 
         if (response.error === true) {
           throw new Error(response.body);
@@ -104,6 +112,10 @@ function RecordDetailScreen() {
   });
 
   React.useEffect(() => {
+    updateSearchPath("", true);
+  }, []);
+
+  React.useEffect(() => {
     (async () => {
       try {
         let recordId = window.location.pathname?.substring(
@@ -111,7 +123,7 @@ function RecordDetailScreen() {
         );
         setIsLoading(true);
         const retrievedRecords = await getRecordsApi({
-          recordId,
+          identificationNumber: recordId,
         });
 
         // const searchedRecords = await getRecordsApi({});
@@ -171,7 +183,12 @@ function RecordDetailScreen() {
   const handleDelete = async (isDeletionConfirmed, params) => {
     if (isDeletionConfirmed == true) {
       try {
-        let res = await removeRecordFileApi(params);
+        let res;
+        if (params.otherFileId) {
+          res = await removeOtherFileApi(params);
+        } else {
+          res = await removeRecordFileApi(params);
+        }
         setReqToggle(!reqToggle);
       } catch (error) {
         console.log(error);
@@ -191,16 +208,17 @@ function RecordDetailScreen() {
 
     return Object.keys(labels);
   };
+
   return (
     <React.Fragment>
       <TopBar
-        label={`Expediente  NO. ${currentRecord?.record_code}`}
+        label={`Expediente`}
         backTo={"/records"}
         button={{
           label: "Ver histórico",
           onClick: () =>
             navigate(`${window.location.pathname}/history`, {
-              recordId: currentRecord.record_id,
+              recordId: currentRecord.record_code,
             }),
         }}
         btnIcon={<MdHistory size={18} />}
@@ -306,12 +324,12 @@ function RecordDetailScreen() {
                     </span>
                     <select
                       value={uploadForm.values.beneficiaryId}
-                      disabled={
-                        currentRecord.customer.customer_type ==
-                        "PHYSICAL_PERSON"
-                          ? true
-                          : false
-                      }
+                      // disabled={
+                      //   currentRecord.customer.customer_type ==
+                      //   "PHYSICAL_PERSON"
+                      //     ? true
+                      //     : false
+                      // }
                       onChange={(e) => {
                         uploadForm.setFieldValue(
                           "beneficiaryId",
@@ -327,7 +345,12 @@ function RecordDetailScreen() {
                       )}
 
                       {orderBy(
-                        currentRecord.beneficiaries,
+                        currentRecord.beneficiaries?.filter(
+                          (beneficiary) =>
+                            beneficiary.beneficiary_type == "PHYSICAL_PERSON" ||
+                            beneficiary.identification_number ==
+                              currentRecord.record_code
+                        ),
                         ["order"],
                         "desc"
                       )?.map((opt, index) => (
@@ -335,6 +358,7 @@ function RecordDetailScreen() {
                           {opt.name}
                         </option>
                       ))}
+                      <option value="OTHER_DOC">OTRA DOCUMENTACION</option>
                     </select>
                   </div>
                 </div>
@@ -390,10 +414,14 @@ function RecordDetailScreen() {
             (beneficiary, index) => {
               return (
                 <>
-                  <SectionDivision
-                    title={`${beneficiary.name}  ---  ${getLabelName(
-                      beneficiary.beneficiary_type
-                    )} ${beneficiary.is_pep == true ? "| Pep " : ""}
+                  {beneficiary.beneficiary_type == "PHYSICAL_PERSON" ||
+                  beneficiary.identification_number ==
+                    currentRecord.record_code ? (
+                    <div>
+                      <SectionDivision
+                        title={`${beneficiary.name}  ---  ${getLabelName(
+                          beneficiary.beneficiary_type
+                        )} ${beneficiary.is_pep == true ? "| Pep " : ""}
                   ${beneficiary.is_politician == true ? "| Politico " : ""}
                   ${
                     beneficiary.is_politician_relative == true
@@ -403,39 +431,131 @@ function RecordDetailScreen() {
                    (${
                      getCurrentRecordFiles(beneficiary.record_files)?.length
                    }/${beneficiary.required_files.length})`}
-                    containerStyle={{}}
-                  />
-
-                  <ListWrapper>
-                    {beneficiary.record_files?.length == 0 && (
-                      <NoDataFound
-                        label={"Aún no se ha cargado nigún archivo"}
+                        containerStyle={{}}
                       />
-                    )}
-                    {}
-                    {getCurrentRecordFiles(beneficiary.record_files)?.map(
-                      (file, key) => {
-                        return (
-                          <FileCard
-                            key={key}
-                            data={file}
-                            handleRemove={() => {
-                              setItemToDelete({
-                                fileLocation: file.source,
-                                recordFileId: file.record_file_id,
-                              });
 
-                              setIsConfirmOpen(true);
-                            }}
+                      <ListWrapper>
+                        {beneficiary.record_files?.length == 0 && (
+                          <NoDataFound
+                            label={"Aún no se ha cargado nigún archivo"}
                           />
-                        );
-                      }
-                    )}
-                  </ListWrapper>
+                        )}
+                        {}
+                        {getCurrentRecordFiles(beneficiary.record_files)?.map(
+                          (file, key) => {
+                            return (
+                              <FileCard
+                                key={key}
+                                data={file}
+                                handleRemove={() => {
+                                  setItemToDelete({
+                                    fileLocation: file.source,
+                                    recordFileId: file.record_file_id,
+                                  });
+
+                                  setIsConfirmOpen(true);
+                                }}
+                              />
+                            );
+                          }
+                        )}
+                      </ListWrapper>
+                    </div>
+                  ) : (
+                    <div style={{ backgroundColor: "white" }}>
+                      <Link
+                        style={{ textDecoration: "none" }}
+                        onClick={() =>
+                          updateSearchPath(beneficiary.identification_number)
+                        }
+                        to={`/records/${beneficiary.identification_number}`}
+                      >
+                        <div
+                          style={{
+                            backgroundColor: "white",
+                            boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+                            width: 300,
+                            boxSizing: "border-box",
+                            padding: "6px 14px",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            margin: "6px 0",
+                          }}
+                        >
+                          <p>{`${beneficiary.name}  ---  ${getLabelName(
+                            beneficiary.beneficiary_type
+                          )} ${beneficiary.is_pep == true ? "| Pep " : ""}
+                          ${
+                            beneficiary.is_politician == true
+                              ? "| Politico "
+                              : ""
+                          }
+                          ${
+                            beneficiary.is_politician_relative == true
+                              ? "| Familiar politico"
+                              : ""
+                          }
+                        `}</p>
+                          <div
+                            style={{
+                              width: 20,
+                              height: 20,
+                              border: "1px solid rgba(0,0,0,0.2)",
+                              borderRadius: 9999,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <BsArrowRight />
+                          </div>
+                          {/* <SectionDivision
+                            title={`${beneficiary.name}  ---  ${getLabelName(
+                              beneficiary.beneficiary_type
+                            )} ${beneficiary.is_pep == true ? "| Pep " : ""}
+                          ${
+                            beneficiary.is_politician == true
+                              ? "| Politico "
+                              : ""
+                          }
+                          ${
+                            beneficiary.is_politician_relative == true
+                              ? "| Familiar politico"
+                              : ""
+                          }
+                        `}
+                          /> */}
+                        </div>
+                      </Link>
+                    </div>
+                  )}
                 </>
               );
             }
           )}
+
+          <div>
+            <SectionDivision title={"OTRA DOCUMENTACION"} />
+            <ListWrapper>
+              {currentRecord?.other_files?.map((file, key) => {
+                return (
+                  <FileCard
+                    key={key}
+                    data={file}
+                    handleRemove={() => {
+                      setItemToDelete({
+                        fileLocation: file.source,
+                        otherFileId: file.other_file_id,
+                      });
+
+                      setIsConfirmOpen(true);
+                    }}
+                  />
+                );
+              })}
+            </ListWrapper>
+          </div>
         </Layout>
       )}
       <ConfirmModal

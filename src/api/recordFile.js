@@ -41,6 +41,34 @@ async function uploadRecordFileApi(data) {
   }
 }
 
+async function uploadOtherFileApi(data) {
+  const formData = new FormData();
+
+  formData.append("name", data.filename);
+  formData.append("recordId", data.recordId);
+  formData.append("expirationDate", data.expirationDate);
+  formData.append("docCreationDate", data.docCreationDate);
+  formData.append("beneficiaryId", data.beneficiaryId);
+  formData.append("fileTypeId", data.fileTypeId);
+  formData.append("lastModifiedBy", data.lastModifiedBy);
+  formData.append("createdBy", data.createdBy);
+  formData.append("identification", data.customerIdentification);
+  formData.append("file", data.file);
+
+  try {
+    const otherFile = await request({
+      path: "/other-file/upload",
+      method: "POST",
+      data: formData,
+      isFormData: true,
+    });
+
+    return otherFile;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 async function removeRecordFileApi(queryParams) {
   try {
     const deleted = await request({
@@ -55,4 +83,24 @@ async function removeRecordFileApi(queryParams) {
   }
 }
 
-export { getRecordFilesApi, uploadRecordFileApi, removeRecordFileApi };
+async function removeOtherFileApi(queryParams) {
+  try {
+    const deleted = await request({
+      method: "DELETE",
+      path: "/other-file",
+      customParams: queryParams,
+    });
+
+    return deleted;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export {
+  getRecordFilesApi,
+  uploadRecordFileApi,
+  uploadOtherFileApi,
+  removeRecordFileApi,
+  removeOtherFileApi,
+};
